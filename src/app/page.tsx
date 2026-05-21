@@ -1,44 +1,52 @@
+'use client'
+
 import {Copy, Plus} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import ClientRow from "@/components/shift/ClientRow";
 import ShiftCard from "@/components/shift/ShiftCard";
+import Link from "next/link";
+import {useStore} from "@nanostores/react";
+import {settingsStore} from "@/store/settingsStore";
+import {clientsStore} from "@/store/shiftStore";
 
 export default function Home() {
+  const clients = useStore(clientsStore)
+  const settings = useStore(settingsStore)
+
   return (
     <div className="grid gap-5">
       <div className="flex justify-between gap-2 ">
         <div className="grid gap-0.5">
           <p className="text-xs uppercase text-muted-foreground">Добрый день</p>
-          <h1 className="text-lg ">Сотрудник</h1>
+          <h1 className="text-lg ">{settings.name || 'Сотрудник'}</h1>
         </div>
         <div className="w-10 h-10 flex items-center justify-center text-xs font-semibold text-primary-foreground bg-gradient-to-br from-primary to-accent2 rounded-full">АВ</div>
       </div>
 
-      <ShiftCard />
+      <ShiftCard plan={settings.plan} />
 
       <div className="grid gap-3">
         <h2>Клиенты</h2>
         <ul className="grid gap-2 ">
-          <ClientRow
-            name="Иванов"
-            services="ДК, ДКО, К+, ПИН, КЕШ"
-            type="issued"
-          />
-          <ClientRow
-            name="Петров"
-            services="НС, ИЗП, ВТБ+"
-            type="transfer"
-          />
-          <ClientRow
-            name="Сидоров"
-            services="КК заявка, Вклад"
-            type="rejected"
-          />
+          {clients.map((client)=>(
+            <ClientRow
+              key={client.id}
+              name={client.name}
+              services={client.services}
+              type={client.type}
+            />
+          ))}
         </ul>
       </div>
 
       <div className="grid gap-2 ">
-        <Button size="lg"> <Plus />Добавить клиента</Button>
+        <Link href="/add">
+          <Button
+            size="lg"
+            className="w-full"
+          ><Plus />Добавить клиента</Button>
+        </Link>
+
         <Button
           size="lg"
           variant="outline"

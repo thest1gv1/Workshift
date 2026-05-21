@@ -1,8 +1,9 @@
 import {Badge} from "@/components/ui/badge";
+import {SERVICES} from "@/constants/services";
 
 interface ClientRowProps {
   name: string
-  services: string
+  services: string[]
   type: 'issued' | 'transfer' | 'rejected'
 }
 
@@ -28,7 +29,9 @@ export default function ClientRow({name, services, type}: ClientRowProps) {
       </div>
       <div>
         <p className="text-sm">{name}</p>
-        <p className="text-xs text-muted-foreground">{services}</p>
+        <p className="text-xs text-muted-foreground">
+          {services.map(id => SERVICES.find(s => s.id === id)?.label ?? id).join(', ')}
+        </p>
       </div>
       <div className="ml-auto ">
         <Badge variant={badgeVariant[type]}>{badgeLabel[type]}</Badge></div>
