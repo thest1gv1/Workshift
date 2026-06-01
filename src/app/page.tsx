@@ -20,7 +20,7 @@ export default function Home() {
           <p className="text-xs uppercase text-muted-foreground">Добрый день</p>
           <h1 className="text-lg ">{settings.name || 'Сотрудник'}</h1>
         </div>
-        <div className="w-10 h-10 flex items-center justify-center text-xs font-semibold text-primary-foreground bg-gradient-to-br from-primary to-accent2 rounded-full">АВ</div>
+        <div className="w-10 h-10 flex items-center justify-center text-xs font-semibold text-primary-foreground bg-linear-to-br from-primary to-accent2 rounded-full">АВ</div>
       </div>
 
       <ShiftCard plan={settings.plan} />
@@ -31,6 +31,7 @@ export default function Home() {
           {clients.map((client)=>(
             <ClientRow
               key={client.id}
+              id={client.id}
               name={client.name}
               services={client.services}
               type={client.type}

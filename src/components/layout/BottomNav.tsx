@@ -10,7 +10,7 @@ export default function BottomNav() {
   const pathname = usePathname()
 
   return (
-    <nav className="flex fixed bottom-0 left-0 right-0 max-w-[480px] mx-auto bg-card uppercase text-xs ">
+    <nav className="flex fixed bottom-0 left-0 right-0  mx-auto bg-card uppercase text-xs ">
       <Link
         className={cn("flex-1 flex flex-col items-center gap-1 py-3 text-xs uppercase", pathname === "/" ? "text-primary" : "text-muted-foreground")}
         href="/"
