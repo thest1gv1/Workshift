@@ -3,14 +3,19 @@
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { SERVICES } from '@/constants/services'
-import { addClient, clientsStore, ClientType, updateClient } from '@/store/shiftStore'
+import {
+	addClient,
+	clientsStore,
+	ClientType,
+	updateClient,
+} from '@/store/shiftStore'
 import { cn } from '@/lib/utils'
 import { useRouter, useSearchParams } from 'next/navigation'
-import {  useState } from 'react'
+import { Suspense, useState } from 'react'
 import { useStore } from '@nanostores/react'
 import { toast } from 'sonner'
 
-export default function AddPage() {
+function AddForm() {
 	const router = useRouter()
 	const searchParams = useSearchParams()
 	const id = searchParams.get('id')
@@ -38,20 +43,20 @@ export default function AddPage() {
 	}
 
 	const handleSave = () => {
-  if (!name.trim()) return
+		if (!name.trim()) return
 
-  const data = { name, type, services: selectedServices, amounts, note }
+		const data = { name, type, services: selectedServices, amounts, note }
 
-  if (id) {
-    updateClient(id, data)
-  } else {
-    addClient(data)
-  }
+		if (id) {
+			updateClient(id, data)
+		} else {
+			addClient(data)
+		}
 
-	toast.success(id ? 'Клиент обновлен': 'Клиент добавлен')
+		toast.success(id ? 'Клиент обновлен' : 'Клиент добавлен')
 
-  router.push('/')
-}
+		router.push('/')
+	}
 
 	return (
 		<div className='grid gap-5'>
@@ -193,5 +198,12 @@ export default function AddPage() {
 				Сохранить клиента
 			</Button>
 		</div>
+	)
+}
+export default function AddPage() {
+	return (
+		<Suspense>
+			<AddForm />
+		</Suspense>
 	)
 }
