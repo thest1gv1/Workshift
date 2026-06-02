@@ -1,41 +1,47 @@
-import StatBox from "@/components/shift/StatBox";
+'use client'
 
+import StatBox from '@/components/shift/StatBox'
+import { SERVICES } from '@/constants/services'
+import { clientsStore } from '@/store/shiftStore'
+import { useStore } from '@nanostores/react'
 
 export default function StatsPage() {
-  return (
-    <div className="grid gap-5">
-      <h1>Статистика</h1>
-      <div className="grid grid-cols-2 gap-2">
-        <StatBox
-          value={1}
-          label='Выдано'
-        />
-        <StatBox
-          value={0}
-          label='Клиентопоток'
-        />
-      </div>
+	const clients = useStore(clientsStore)
+	const issued = clients.filter(c => c.type === 'issued').length
 
+	const countService = (id: string) =>
+		clients.filter(c => c.services.includes(id)).length
 
-      <div className="grid gap-2">
-        <span className="text-xs uppercase text-muted-foreground tracking-wider">Услуги</span>
-        <div>
-          <ul className="grid gap-2">
-            <li className="flex justify-between items-center p-3 bg-card rounded-lg">
-              <span className=" text-muted-foreground">ДК</span>
-              <span className=" font-semibold text-primary">3</span>
-            </li>
-            <li className="flex justify-between items-center p-3 bg-card rounded-lg">
-              <span className=" text-muted-foreground">КЕШ</span>
-              <span className=" font-semibold text-primary">2</span>
-            </li>
-            <li className="flex justify-between items-center p-3 bg-card rounded-lg">
-              <span className=" text-muted-foreground">ДКО</span>
-              <span className=" font-semibold text-primary">4</span>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  )
+	return (
+		<div className='grid gap-5'>
+			<h1>Статистика</h1>
+			<div className='grid grid-cols-2 gap-2'>
+				<StatBox value={issued} label='Выдано' />
+				<StatBox value={clients.length} label='Клиентопоток' />
+			</div>
+
+			<div className='grid gap-2'>
+				<span className='text-muted-foreground text-xs tracking-wider uppercase'>
+					Услуги
+				</span>
+				<div>
+					<ul className='grid gap-2'>
+						{SERVICES.filter(service => countService(service.id) > 0)
+							.sort((a, b) => countService(b.id) - countService(a.id))
+							.map(service => (
+								<li
+									className='bg-card flex items-center justify-between rounded-lg p-3'
+									key={service.id}
+								>
+									<span className='text-muted-foreground'>{service.label}</span>
+									<span className='text-primary font-semibold'>
+										{countService(service.id)}
+									</span>
+								</li>
+							))}
+					</ul>
+				</div>
+			</div>
+		</div>
+	)
 }

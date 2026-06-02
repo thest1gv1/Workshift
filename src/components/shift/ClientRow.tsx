@@ -33,13 +33,13 @@ export default function ClientRow({
 	type,
 }: ClientRowProps) {
 	return (
-		<li className='bg-card border-border active:bg-secondary/80 flex items-center gap-2 rounded-xl border p-4 transition-colors duration-150'>
+		<li className='bg-card border-border active:bg-secondary/80 flex items-center gap-2 overflow-hidden rounded-xl border p-4 transition-colors duration-150'>
 			<div className='bg-primary/20 text-primary flex h-10 w-10 items-center justify-center rounded-lg text-xs'>
 				<span>{name[0].toUpperCase()}</span>
 			</div>
-			<div>
+			<div className='min-w-0 flex-1 overflow-hidden'>
 				<p className='text-sm'>{name}</p>
-				<p className='text-muted-foreground text-xs'>
+				<p className='text-muted-foreground truncate text-xs'>
 					{services
 						.map(id => SERVICES.find(s => s.id === id)?.label ?? id)
 						.join(', ')}
