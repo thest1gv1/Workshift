@@ -14,9 +14,11 @@ export default function AddPage() {
 	const [name, setName] = useState('')
 	const [type, setType] = useState<ClientType>('issued')
 	const [selectedServices, setSelectedServices] = useState<string[]>([])
+	const [amounts, setAmounts] = useState<Record<string, number>>({})
 	const [note, setNote] = useState('')
 
 	console.log(selectedServices)
+	console.log(amounts)
 
 	const toggleService = (id: string) => {
 		setSelectedServices(prev =>
@@ -31,6 +33,7 @@ export default function AddPage() {
 			name,
 			type,
 			services: selectedServices,
+			amounts,
 			note,
 		})
 
@@ -133,6 +136,42 @@ export default function AddPage() {
 						placeholder='Проблемы, нет доступа к лк, арест...'
 						onChange={e => setNote(e.target.value)}
 					/>
+				</div>
+			</div>
+
+			<div className='grid gap-2'>
+				<span className='text-muted-foreground text-xs tracking-wider uppercase'>
+					Суммы по услугам
+				</span>
+				<div className='bg-card rounded-2xl p-4'>
+					<ul className='grid gap-2'>
+						{SERVICES.filter(
+							s => selectedServices.includes(s.id) && s.hasAmount,
+						).map(service => (
+							<li
+								className='flex items-center justify-between gap-4'
+								key={service.id}
+							>
+								<div className='flex items-center justify-between gap-2'>
+									<span className='bg-primary h-2 w-2 rounded-full' />
+									<span>{service.label}</span>
+								</div>
+
+								<Input
+									value={amounts[service.id] || ''}
+									placeholder='0'
+									onChange={e =>
+										setAmounts(prev => ({
+											...prev,
+											[service.id]: Number(e.target.value),
+										}))
+									}
+									type='number'
+								/>
+								<span className='text-muted-foreground'>₽</span>
+							</li>
+						))}
+					</ul>
 				</div>
 			</div>
 

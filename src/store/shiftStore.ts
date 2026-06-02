@@ -6,6 +6,7 @@ export interface Client {
 	id: string
 	name: string
 	services: string[]
+	amounts?: Record<string,number>
 	type: ClientType
 	note?: string
 }
@@ -19,8 +20,6 @@ export function addClient(client: Omit<Client, 'id'>) {
 	])
 }
 
-export function deleteClient(id: string){
-    clientsStore.set(
-      clientsStore.get().filter(c => c.id !== id)
-    ) 
+export function deleteClient(id: string) {
+	clientsStore.set(clientsStore.get().filter(c => c.id !== id))
 }
