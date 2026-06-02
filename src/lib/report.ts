@@ -62,7 +62,7 @@ ${clients
 КН: ${countService('kn')}/${sumService('kn')}
 Нс пустой: ${countService('ns')}
 НС от 10к/сумм: ${countService('ns10')}/${sumService('ns10')}
-Вклад/сумм: ${countService('vklad')}
+Вклад/сумм: ${countService('vklad')}/${sumService('vklad')}
 ПИФ/сумм: ${countService('pif')}/${sumService('pif')}
 ПДС/сумм: ${countService('pds')}/${sumService('pds')}
 Пенсия: ${countService('pensiya')}
