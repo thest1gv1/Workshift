@@ -3,6 +3,7 @@ import { Onest, Unbounded } from 'next/font/google'
 import { cn } from '@/lib/utils'
 import BottomNav from '@/components/layout/BottomNav'
 import './globals.css'
+import { Toaster } from '@/components/ui/sonner'
 
 const onest = Onest({
 	subsets: ['latin', 'cyrillic'],
@@ -32,9 +33,8 @@ export default function RootLayout({
 			className={cn('dark font-sans', onest.variable, unbounded.variable)}
 		>
 			<body>
-				<div className='mx-auto w-full px-4 pt-10 pb-20 '>
-					{children} 
-				</div>
+				<Toaster position='top-center'  />
+				<div className='mx-auto w-full px-4 pt-10 pb-20'>{children}</div>
 				<BottomNav />
 			</body>
 		</html>

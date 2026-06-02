@@ -38,8 +38,8 @@
 	// Внешний вид
 	"editor.bracketPairColorization.enabled": false,
 	"editor.glyphMargin": false,
-	"editor.scrollbar.horizontal": "hidden",
-	"editor.scrollbar.vertical": "hidden",
+	"editor.scrollbar.horizontal": "auto",
+	"editor.scrollbar.vertical": "auto",
 	"workbench.productIconTheme": "el-vsc-v1-icons",
 	"window.density.editorTabHeight": "compact",
 	"editor.accessibilitySupport": "off",

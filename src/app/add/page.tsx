@@ -3,22 +3,33 @@
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { SERVICES } from '@/constants/services'
-import { addClient, ClientType } from '@/store/shiftStore'
+import { addClient, clientsStore, ClientType, updateClient } from '@/store/shiftStore'
 import { cn } from '@/lib/utils'
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import {  useState } from 'react'
+import { useStore } from '@nanostores/react'
+import { toast } from 'sonner'
 
 export default function AddPage() {
 	const router = useRouter()
+	const searchParams = useSearchParams()
+	const id = searchParams.get('id')
+	const clients = useStore(clientsStore)
+	const editing = id ? clients.find(c => c.id === id) : null
 
-	const [name, setName] = useState('')
-	const [type, setType] = useState<ClientType>('issued')
-	const [selectedServices, setSelectedServices] = useState<string[]>([])
-	const [amounts, setAmounts] = useState<Record<string, number>>({})
-	const [note, setNote] = useState('')
+	const [name, setName] = useState(editing?.name ?? '')
+	const [type, setType] = useState<ClientType>(editing?.type ?? 'issued')
+	const [selectedServices, setSelectedServices] = useState<string[]>(
+		editing?.services ?? [],
+	)
+	const [amounts, setAmounts] = useState<Record<string, number>>(
+		editing?.amounts ?? {},
+	)
+	const [note, setNote] = useState(editing?.note ?? '')
 
-	console.log(selectedServices)
-	console.log(amounts)
+	const paidServices = SERVICES.filter(
+		s => selectedServices.includes(s.id) && s.hasAmount,
+	)
 
 	const toggleService = (id: string) => {
 		setSelectedServices(prev =>
@@ -27,18 +38,20 @@ export default function AddPage() {
 	}
 
 	const handleSave = () => {
-		if (!name.trim()) return
+  if (!name.trim()) return
 
-		addClient({
-			name,
-			type,
-			services: selectedServices,
-			amounts,
-			note,
-		})
+  const data = { name, type, services: selectedServices, amounts, note }
 
-		router.push('/')
-	}
+  if (id) {
+    updateClient(id, data)
+  } else {
+    addClient(data)
+  }
+
+	toast.success(id ? 'Клиент обновлен': 'Клиент добавлен')
+
+  router.push('/')
+}
 
 	return (
 		<div className='grid gap-5'>
@@ -139,41 +152,42 @@ export default function AddPage() {
 				</div>
 			</div>
 
-			<div className='grid gap-2'>
-				<span className='text-muted-foreground text-xs tracking-wider uppercase'>
-					Суммы по услугам
-				</span>
-				<div className='bg-card rounded-2xl p-4'>
-					<ul className='grid gap-2'>
-						{SERVICES.filter(
-							s => selectedServices.includes(s.id) && s.hasAmount,
-						).map(service => (
-							<li
-								className='flex items-center justify-between gap-4'
-								key={service.id}
-							>
-								<div className='flex items-center justify-between gap-2'>
-									<span className='bg-primary h-2 w-2 rounded-full' />
-									<span>{service.label}</span>
-								</div>
+			{paidServices.length > 0 && (
+				<div className='grid gap-2'>
+					<span className='text-muted-foreground text-xs tracking-wider uppercase'>
+						Суммы по услугам
+					</span>
+					<div className='bg-card rounded-2xl p-4'>
+						<ul className='grid gap-2'>
+							{paidServices.map(service => (
+								<li
+									className='flex items-center justify-between gap-4'
+									key={service.id}
+								>
+									<div className='flex items-center justify-between gap-2'>
+										<span className='bg-primary h-2 w-2 rounded-full' />
+										<span className='w-20'>{service.label}</span>
+									</div>
 
-								<Input
-									value={amounts[service.id] || ''}
-									placeholder='0'
-									onChange={e =>
-										setAmounts(prev => ({
-											...prev,
-											[service.id]: Number(e.target.value),
-										}))
-									}
-									type='number'
-								/>
-								<span className='text-muted-foreground'>₽</span>
-							</li>
-						))}
-					</ul>
+									<Input
+										className='flex-1'
+										value={amounts[service.id] || ''}
+										placeholder='0'
+										onChange={e =>
+											setAmounts(prev => ({
+												...prev,
+												[service.id]: Number(e.target.value),
+											}))
+										}
+										type='number'
+									/>
+									<span className='text-muted-foreground'>₽</span>
+								</li>
+							))}
+						</ul>
+					</div>
 				</div>
-			</div>
+			)}
 
 			<Button size='lg' onClick={handleSave}>
 				Сохранить клиента

@@ -147,4 +147,17 @@
 		-webkit-appearance: none;
 		margin: 0;
 	}
+	[data-sonner-toast][data-type='success'] [data-icon] {
+		color: var(--primary);
+	}
+
+	[data-sonner-toast][data-type='error'] [data-icon] {
+		color: var(--destructive);
+	}
+
+	[data-sonner-toast][data-type='warning'] [data-icon] {
+		color: var(--amber);
+	}
+
+	
 }

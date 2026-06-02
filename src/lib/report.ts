@@ -1,6 +1,7 @@
 import { SERVICES } from '@/constants/services'
 import type { Settings } from '@/store/settingsStore'
 import type { Client } from '@/store/shiftStore'
+import { toast } from 'sonner'
 
 export function generateReport(clients: Client[], settings: Settings) {
 	const now = new Date()
@@ -72,4 +73,6 @@ ${clients
 КОБ/КРБ (мин 0,8):${countService('kob')}
 Арест: ${countService('arrest')}
 Блокировка ВТБо: ${countService('blok')}`
+
+
 }

@@ -9,6 +9,7 @@ import { useStore } from '@nanostores/react'
 import { settingsStore } from '@/store/settingsStore'
 import { clientsStore } from '@/store/shiftStore'
 import { generateReport } from '@/lib/report'
+import { toast } from 'sonner'
 
 export default function Home() {
 	const clients = useStore(clientsStore)
@@ -57,7 +58,9 @@ export default function Home() {
 					onClick={async () => {
 						await navigator.clipboard.writeText(
 							generateReport(clients, settings),
+							
 						)
+						toast.success('Отчёт скопирован')
 					}}
 				>
 					{' '}
