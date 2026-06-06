@@ -63,7 +63,7 @@ export default function ShiftCard({ plan }: ShiftCardProps) {
 				</div>
 				<div className='bg-secondary h-1 rounded-full'>
 					<div
-						className='from-primary to-accent2 h-full rounded-full bg-gradient-to-r transition-all duration-300'
+						className='from-primary to-accent2 h-full rounded-full bg-linear-to-r transition-all duration-300'
 						style={{ width: `${progress}%` }}
 					/>
 				</div>

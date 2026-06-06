@@ -159,5 +159,10 @@
 		color: var(--amber);
 	}
 
-	
+	[data-sonner-toast] [data-close-button] {
+		top: 15 !important;
+		right: 15 !important;
+		left: auto !important;
+		transform: translate(35%, -35%) !important;
+	}
 }

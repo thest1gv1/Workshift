@@ -58,7 +58,6 @@ export default function Home() {
 					onClick={async () => {
 						await navigator.clipboard.writeText(
 							generateReport(clients, settings),
-							
 						)
 						toast.success('Отчёт скопирован')
 					}}

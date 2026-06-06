@@ -1,7 +1,7 @@
 import { SERVICES } from '@/constants/services'
 import type { Settings } from '@/store/settingsStore'
 import type { Client } from '@/store/shiftStore'
-import { toast } from 'sonner'
+
 
 export function generateReport(clients: Client[], settings: Settings) {
 	const now = new Date()
