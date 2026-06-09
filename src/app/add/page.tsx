@@ -21,6 +21,8 @@ function AddForm() {
 	const [amounts, setAmounts] = useState<Record<string, number>>({})
 	const [note, setNote] = useState('')
 
+	
+
 	const paidServices = SERVICES.filter(
 		s => selectedServices.includes(s.id) && s.hasAmount,
 	)
@@ -37,13 +39,13 @@ function AddForm() {
 		const data = { name, type, services: selectedServices, amounts, note }
 
 		if (id) {
-			await fetch(`/api/clients/${id}`, {
+			await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/clients/${id}`, {
 				method: 'PUT',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify(data),
 			})
 		} else {
-			await fetch('/api/clients', {
+			await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/clients`, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify(data),
@@ -58,7 +60,7 @@ function AddForm() {
 	useEffect(() => {
 		if (!id) return
 
-		fetch(`/api/clients/${id}`)
+		fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/clients/${id}`)
 			.then(res => res.json())
 			.then(client => {
 				setName(client.name)

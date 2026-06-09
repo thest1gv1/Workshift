@@ -38,7 +38,7 @@ export default function ClientRow({
 }: ClientRowProps) {
 
 	const handleDelete = async () => {
-		await fetch(`/api/clients/${id}`, { method: 'DELETE' })
+		await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/clients/${id}`, { method: 'DELETE' })
 		fetchClients()
 		toast.success('Клиент удалён')
 	}

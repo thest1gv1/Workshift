@@ -19,7 +19,7 @@ export default function Home() {
 	const [clients, setClients] = useState<Client[]>([])
 
 	const fetchClients = () => {
-		fetch('/api/clients', {
+		fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/clients`, {
 			method: 'GET',
 			headers: { 'Content-Type': 'application/json' },
 		})
