@@ -7,13 +7,29 @@ import ShiftCard from '@/components/shift/ShiftCard'
 import Link from 'next/link'
 import { useStore } from '@nanostores/react'
 import { settingsStore } from '@/store/settingsStore'
-import { clientsStore } from '@/store/shiftStore'
+import { Client } from '@/store/shiftStore'
 import { generateReport } from '@/lib/report'
 import { toast } from 'sonner'
+import { useEffect, useState } from 'react'
 
 export default function Home() {
-	const clients = useStore(clientsStore)
+	// const clients = useStore(clientsStore)
 	const settings = useStore(settingsStore)
+
+	const [clients, setClients] = useState<Client[]>([])
+
+	const fetchClients = () => {
+		fetch('/api/clients', {
+			method: 'GET',
+			headers: { 'Content-Type': 'application/json' },
+		})
+			.then(res => res.json())
+			.then(data => setClients(data))
+	}
+
+	useEffect(() => {
+		fetchClients()
+	}, [])
 
 	return (
 		<div className='grid gap-5'>
@@ -27,18 +43,19 @@ export default function Home() {
 				</div>
 			</div>
 
-			<ShiftCard plan={settings.plan} />
+			<ShiftCard clients={clients} plan={settings.plan} />
 
 			<div className='grid gap-3'>
 				<h2>Клиенты</h2>
 				<ul className='grid gap-2'>
 					{clients.map(client => (
 						<ClientRow
-							key={client.id}
+							key={String(client.id)}
 							id={client.id}
 							name={client.name}
 							services={client.services}
 							type={client.type}
+							fetchClients={fetchClients}
 						/>
 					))}
 				</ul>

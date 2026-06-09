@@ -14,12 +14,12 @@ export interface Client {
 
 export const clientsStore = atom<Client[]>([])
 
-export function addClient(client: Omit<Client, 'id'>) {
-	clientsStore.set([
-		...clientsStore.get(),
-		{ ...client, id: crypto.randomUUID() },
-	])
-}
+// export function addClient(client: Omit<Client, 'id'>) {
+// 	clientsStore.set([
+// 		...clientsStore.get(),
+// 		{ ...client, id: crypto.randomUUID() },
+// 	])
+// }
 
 export function updateClient(id: string, data: Omit<Client, 'id'>) {
 	clientsStore.set(
@@ -27,8 +27,6 @@ export function updateClient(id: string, data: Omit<Client, 'id'>) {
 	)
 }
 
-export function deleteClient(id: string) {
-	clientsStore.set(clientsStore.get().filter(c => c.id !== id))
-
-	
-}
+// export function deleteClient(id: string) {
+// 	clientsStore.set(clientsStore.get().filter(c => c.id !== id))
+// }

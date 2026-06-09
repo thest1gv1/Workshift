@@ -1,7 +1,7 @@
 import { Badge } from '@/components/ui/badge'
 import { SERVICES } from '@/constants/services'
 import { Button } from '../ui/button'
-import { deleteClient } from '@/store/shiftStore'
+// import { deleteClient } from '@/store/shiftStore'
 import { Trash2 } from 'lucide-react'
 import Link from 'next/link'
 import { toast } from 'sonner'
@@ -11,6 +11,7 @@ interface ClientRowProps {
 	name: string
 	services: string[]
 	type: 'issued' | 'transfer' | 'rejected'
+	fetchClients: () => void
 }
 
 const badgeVariant: Record<
@@ -33,7 +34,15 @@ export default function ClientRow({
 	name,
 	services,
 	type,
+	fetchClients,
 }: ClientRowProps) {
+
+	const handleDelete = async () => {
+		await fetch(`/api/clients/${id}`, { method: 'DELETE' })
+		fetchClients()
+		toast.success('Клиент удалён')
+	}
+
 	return (
 		<li className='bg-card border-border active:bg-secondary/80 flex items-center gap-2 overflow-hidden rounded-xl border p-4 transition-colors duration-150'>
 			<Link
@@ -53,14 +62,7 @@ export default function ClientRow({
 				</div>
 				<Badge variant={badgeVariant[type]}>{badgeLabel[type]}</Badge>
 			</Link>
-			<Button
-				variant='ghost'
-				size='icon'
-				onClick={() => {
-					deleteClient(id)
-					toast.success('Клиент удалён')
-				}}
-			>
+			<Button variant='ghost' size='icon' onClick={handleDelete}>
 				<Trash2 className='text-muted-foreground h-4 w-4' />
 			</Button>
 		</li>

@@ -3,34 +3,23 @@
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { SERVICES } from '@/constants/services'
-import {
-	addClient,
-	clientsStore,
-	ClientType,
-	updateClient,
-} from '@/store/shiftStore'
+import { ClientType } from '@/store/shiftStore'
 import { cn } from '@/lib/utils'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Suspense, useState } from 'react'
-import { useStore } from '@nanostores/react'
+import { Suspense, useEffect, useState } from 'react'
+
 import { toast } from 'sonner'
 
 function AddForm() {
 	const router = useRouter()
 	const searchParams = useSearchParams()
 	const id = searchParams.get('id')
-	const clients = useStore(clientsStore)
-	const editing = id ? clients.find(c => c.id === id) : null
 
-	const [name, setName] = useState(editing?.name ?? '')
-	const [type, setType] = useState<ClientType>(editing?.type ?? 'issued')
-	const [selectedServices, setSelectedServices] = useState<string[]>(
-		editing?.services ?? [],
-	)
-	const [amounts, setAmounts] = useState<Record<string, number>>(
-		editing?.amounts ?? {},
-	)
-	const [note, setNote] = useState(editing?.note ?? '')
+	const [name, setName] = useState('')
+	const [type, setType] = useState<ClientType>('issued')
+	const [selectedServices, setSelectedServices] = useState<string[]>([])
+	const [amounts, setAmounts] = useState<Record<string, number>>({})
+	const [note, setNote] = useState('')
 
 	const paidServices = SERVICES.filter(
 		s => selectedServices.includes(s.id) && s.hasAmount,
@@ -42,21 +31,43 @@ function AddForm() {
 		)
 	}
 
-	const handleSave = () => {
+	const handleSave = async () => {
 		if (!name.trim()) return
 
 		const data = { name, type, services: selectedServices, amounts, note }
 
 		if (id) {
-			updateClient(id, data)
+			await fetch(`/api/clients/${id}`, {
+				method: 'PUT',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(data),
+			})
 		} else {
-			addClient(data)
+			await fetch('/api/clients', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(data),
+			})
 		}
 
 		toast.success(id ? 'Клиент обновлен' : 'Клиент добавлен')
 
 		router.push('/')
 	}
+
+	useEffect(() => {
+		if (!id) return
+
+		fetch(`/api/clients/${id}`)
+			.then(res => res.json())
+			.then(client => {
+				setName(client.name)
+				setType(client.type)
+				setSelectedServices(client.services)
+				setAmounts(client.amounts)
+				setNote(client.note)
+			})
+	}, [id])
 
 	return (
 		<div className='grid gap-5'>

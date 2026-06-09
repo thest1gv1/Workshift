@@ -1,21 +1,22 @@
 'use client'
 
 import StatBox from '@/components/shift/StatBox'
-import { clientsStore } from '@/store/shiftStore'
+import { Client, clientsStore } from '@/store/shiftStore'
 import { useStore } from '@nanostores/react'
 
 interface ShiftCardProps {
 	plan: number
+	clients : Client[]
 }
 
-export default function ShiftCard({ plan }: ShiftCardProps) {
-	const clients = useStore(clientsStore)
+export default function ShiftCard({ plan, clients }: ShiftCardProps) {
+	// const clients = useStore(clientsStore)
 	const issued = clients.filter(c => c.type === 'issued').length
 	const transfers = clients.filter(c => c.type === 'transfer').length
 	const progress =
 		plan > 0 ? Math.min(100, Math.round((issued / plan) * 100)) : 0
 
-	const now = new Date() 
+	const now = new Date()
 	const days = [
 		'Воскресенье',
 		'Понедельник',
