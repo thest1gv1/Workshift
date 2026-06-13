@@ -1,8 +1,8 @@
 'use client'
 
 import StatBox from '@/components/shift/StatBox'
-import { Client, clientsStore } from '@/store/shiftStore'
-import { useStore } from '@nanostores/react'
+import { Client } from '@/types/client'
+
 
 interface ShiftCardProps {
 	plan: number

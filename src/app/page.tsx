@@ -7,16 +7,16 @@ import ShiftCard from '@/components/shift/ShiftCard'
 import Link from 'next/link'
 import { useStore } from '@nanostores/react'
 import { settingsStore } from '@/store/settingsStore'
-import { Client } from '@/store/shiftStore'
+
 import { generateReport } from '@/lib/report'
 import { toast } from 'sonner'
 import { useEffect, useState } from 'react'
+import { Client } from '@/types/client'
 
 export default function Home() {
 	// const clients = useStore(clientsStore)
 	const settings = useStore(settingsStore)
-
-	const [clients, setClients] = useState<Client[]>([])
+const [clients, setClients] = useState<Client[]>([])
 
 	const fetchClients = () => {
 		fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/clients`, {
@@ -28,10 +28,13 @@ export default function Home() {
 	}
 
 	useEffect(() => {
-		fetchClients()
+		
+			
+			fetchClients()
+		
 	}, [])
 
-	return (
+return (
 		<div className='grid gap-5'>
 			<div className='flex justify-between gap-2'>
 				<div className='grid gap-0.5'>
@@ -47,18 +50,25 @@ export default function Home() {
 
 			<div className='grid gap-3'>
 				<h2>Клиенты</h2>
-				<ul className='grid gap-2'>
-					{clients.map(client => (
-						<ClientRow
-							key={String(client.id)}
-							id={client.id}
-							name={client.name}
-							services={client.services}
-							type={client.type}
-							fetchClients={fetchClients}
-						/>
-					))}
-				</ul>
+
+				{clients.length === 0 ? (
+					<p className='text-muted-foreground py-8 text-center text-sm'>
+						Клиентов нет — нажмите «Добавить клиента»
+					</p>
+				) : (
+					<ul className='grid gap-2'>
+						{clients.map(client => (
+							<ClientRow
+								key={String(client.id)}
+								id={client.id}
+								name={client.name}
+								services={client.services}
+								type={client.type}
+								fetchClients={fetchClients}
+							/>
+						))}
+					</ul>
+				)}
 			</div>
 
 			<div className='grid gap-2'>

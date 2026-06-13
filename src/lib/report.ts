@@ -1,6 +1,7 @@
 import { SERVICES } from '@/constants/services'
 import type { Settings } from '@/store/settingsStore'
-import type { Client } from '@/store/shiftStore'
+import { Client } from '@/types/client'
+
 
 
 export function generateReport(clients: Client[], settings: Settings) {

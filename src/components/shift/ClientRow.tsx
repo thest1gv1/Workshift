@@ -1,7 +1,6 @@
 import { Badge } from '@/components/ui/badge'
 import { SERVICES } from '@/constants/services'
 import { Button } from '../ui/button'
-// import { deleteClient } from '@/store/shiftStore'
 import { Trash2 } from 'lucide-react'
 import Link from 'next/link'
 import { toast } from 'sonner'
@@ -36,9 +35,10 @@ export default function ClientRow({
 	type,
 	fetchClients,
 }: ClientRowProps) {
-
 	const handleDelete = async () => {
-		await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/clients/${id}`, { method: 'DELETE' })
+		await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/clients/${id}`, {
+			method: 'DELETE',
+		})
 		fetchClients()
 		toast.success('Клиент удалён')
 	}

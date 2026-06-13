@@ -3,12 +3,13 @@
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { SERVICES } from '@/constants/services'
-import { ClientType } from '@/store/shiftStore'
+
 import { cn } from '@/lib/utils'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense, useEffect, useState } from 'react'
 
 import { toast } from 'sonner'
+import { ClientType } from '@/types/client'
 
 function AddForm() {
 	const router = useRouter()

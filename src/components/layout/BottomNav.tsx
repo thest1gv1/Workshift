@@ -9,6 +9,8 @@ export default function BottomNav() {
 
   const pathname = usePathname()
 
+  if(pathname === '/login') return null
+
   return (
     <nav className="flex fixed bottom-0 left-0 right-0  mx-auto bg-card uppercase text-xs ">
       <Link
