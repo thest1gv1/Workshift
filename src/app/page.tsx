@@ -18,6 +18,17 @@ export default function Home() {
 	const settings = useStore(settingsStore)
 const [clients, setClients] = useState<Client[]>([])
 
+//временно решение потому что серв на http
+const copyReport = (text: string) => {
+  const textarea = document.createElement('textarea')
+  textarea.value = text
+  document.body.appendChild(textarea)
+  textarea.select()
+  document.execCommand('copy')
+  document.body.removeChild(textarea)
+}
+
+
 	const fetchClients = () => {
 		fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/clients`, {
 			method: 'GET',
@@ -82,11 +93,14 @@ return (
 				<Button
 					size='lg'
 					variant='outline'
-					onClick={async () => {
-						await navigator.clipboard.writeText(
-							generateReport(clients, settings),
-						)
-						toast.success('Отчёт скопирован')
+					onClick={ () => {
+						// await navigator.clipboard.writeText(
+						// 	generateReport(clients, settings),
+						// )
+						// toast.success('Отчёт скопирован')
+
+						copyReport(generateReport(clients, settings))
+    toast.success('Отчёт скопирован')
 					}}
 				>
 					{' '}
