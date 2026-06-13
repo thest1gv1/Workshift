@@ -3,15 +3,12 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Eye, EyeOff } from 'lucide-react'
-import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
 export default function LoginPage() {
 	const [show, setShow] = useState(false)
 	const [code, setCode] = useState('')
-
-	const router = useRouter()
 
 	const handleLogin = async () => {
 		const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/auth`, {
@@ -25,7 +22,7 @@ export default function LoginPage() {
 		if (data.ok) {
 			// сохранить в localStorage и редирект
 			document.cookie = 'auth=true; path=/'
-			router.push('/')
+			window.location.href = process.env.NEXT_PUBLIC_BASE_PATH + '/'
 		} else {
 			toast.error('Неверный код доступа')
 		}
