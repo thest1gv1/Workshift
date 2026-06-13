@@ -6,6 +6,6 @@ export interface Settings {
 }
 
 export const settingsStore = atom({
-	name: '',
+	name: 'Суслов АС',
 	plan: 8,
 })

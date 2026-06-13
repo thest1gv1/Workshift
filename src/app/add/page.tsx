@@ -163,7 +163,7 @@ function AddForm() {
 				</span>
 				<div>
 					<textarea
-						className='bg-input/30 border-border text-foreground placeholder:text-muted-foreground focus:border-ring h-20 w-full resize-none rounded-lg border p-3 text-sm outline-none'
+						className='bg-input border-border text-foreground placeholder:text-muted-foreground focus:border-ring h-20 w-full resize-none rounded-lg border p-3 text-sm outline-none'
 						value={note}
 						placeholder='Проблемы, нет доступа к лк, арест...'
 						onChange={e => setNote(e.target.value)}

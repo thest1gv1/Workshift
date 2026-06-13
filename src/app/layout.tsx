@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils'
 import BottomNav from '@/components/layout/BottomNav'
 import './globals.css'
 import { Toaster } from '@/components/ui/sonner'
+import ThemeProvider from '@/components/ThemeProvider'
 
 const onest = Onest({
 	subsets: ['latin', 'cyrillic'],
@@ -30,12 +31,28 @@ export default function RootLayout({
 	return (
 		<html
 			lang='ru'
-			className={cn('dark font-sans', onest.variable, unbounded.variable)}
+			className={cn('font-sans', onest.variable, unbounded.variable)}
+			suppressHydrationWarning
 		>
+			<head>
+				<script
+					dangerouslySetInnerHTML={{
+						__html: `
+        const t = localStorage.getItem('theme') || 'system'
+        const dark = t === 'dark' || (t === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)
+        if (dark) document.documentElement.classList.add('dark')
+    `,
+					}}
+				/>
+			</head>
 			<body>
-				<Toaster position='top-center'  />
-				<div className='mx-auto w-full px-4 pt-10 pb-20'>{children}</div>
-				<BottomNav />
+				<ThemeProvider>
+					<Toaster position='top-center' />
+					<div className='mx-auto w-full max-w-2xl px-4 pt-10 pb-20'>
+						{children}
+					</div>
+					<BottomNav />
+				</ThemeProvider>
 			</body>
 		</html>
 	)
