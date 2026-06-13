@@ -176,7 +176,7 @@ function AddForm() {
 					<span className='text-muted-foreground text-xs tracking-wider uppercase'>
 						Суммы по услугам
 					</span>
-					<div className='bg-card rounded-2xl p-4'>
+					<div className='bg-muted rounded-2xl p-4'>
 						<ul className='grid gap-2'>
 							{paidServices.map(service => (
 								<li

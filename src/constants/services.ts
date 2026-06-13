@@ -9,6 +9,8 @@ export const SERVICES = [
 	{ id: 'vtbo', label: 'ВТБО', hasAmount: false },
 	{ id: 'izp', label: 'ИЗП', hasAmount: false },
 	{ id: 'zplite', label: 'ЗП Лайт', hasAmount: false },
+	{ id: 'vtbplus', label: 'ВТБ+', hasAmount: false },
+	{ id: 'vtb_pay', label: 'ВТБ PAY', hasAmount: false },
 	{ id: 'avtost', label: 'АвтоСт', hasAmount: true },
 	{ id: 'gruppa', label: 'Группа близкие', hasAmount: false },
 	{ id: 'kk', label: 'КК заявка', hasAmount: false },
@@ -23,9 +25,9 @@ export const SERVICES = [
 	{ id: 'ap_ss', label: 'АП СС', hasAmount: true },
 	{ id: 'ap_jku', label: 'АП ЖКУ', hasAmount: true },
 	{ id: 'vtb_mobile', label: 'ВТБ-мобайл', hasAmount: false },
-	{ id: 'vtb_pay', label: 'ВТБ PAY', hasAmount: false },
+	
 	{ id: 'ps', label: 'ПС кросс', hasAmount: false },
-	{ id: 'vtbplus', label: 'ВТБ+', hasAmount: false },
+	
 	{ id: 'som', label: 'СОМ', hasAmount: true },
 	{ id: 'ksp', label: 'КСП', hasAmount: true },
 	{ id: 'kob', label: 'КОБ/КРБ', hasAmount: false },
