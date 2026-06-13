@@ -53,7 +53,7 @@ return (
 					<h1 className='text-lg'>{settings.name || 'Сотрудник'}</h1>
 				</div>
 				<div className='text-primary-foreground from-primary to-accent2 flex h-10 w-10 items-center justify-center rounded-full bg-linear-to-br text-xs font-semibold'>
-					АВ
+					{settings.name.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase() || 'АВ'}
 				</div>
 			</div>
 
