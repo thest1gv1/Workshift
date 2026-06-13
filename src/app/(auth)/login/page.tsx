@@ -25,7 +25,7 @@ export default function LoginPage() {
 		if (data.ok) {
 			// сохранить в localStorage и редирект
 			document.cookie = 'auth=true; path=/'
-			router.push('/workshift')
+			router.push('/')
 		} else {
 			toast.error('Неверный код доступа')
 		}
