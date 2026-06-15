@@ -75,6 +75,7 @@ return (
 								name={client.name}
 								services={client.services}
 								type={client.type}
+								note={client.note}
 								fetchClients={fetchClients}
 							/>
 						))}

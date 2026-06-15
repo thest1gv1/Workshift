@@ -13,7 +13,7 @@
 - Vercel (деплой)
 
 ## Будущий стек (этап 6+)
-- PostgreSQL на Timeweb
+- PostgreSQL
 - pg + TypeScript (без ORM)
 - Next.js API routes
 

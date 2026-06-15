@@ -1,0 +1,3 @@
+ALTER TABLE clients
+  ADD COLUMN IF NOT EXISTS transfer_date TEXT,
+  ADD COLUMN IF NOT EXISTS transfer_slot TEXT;

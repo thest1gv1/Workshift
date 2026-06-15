@@ -7,4 +7,6 @@ export interface Client {
 	amounts?: Record<string, number>
 	type: ClientType
 	note?: string
+	transferDate?: string
+	transferSlot?: string
 }

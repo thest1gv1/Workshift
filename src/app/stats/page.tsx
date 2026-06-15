@@ -56,7 +56,7 @@ export default function StatsPage() {
 										<span className='text-muted-foreground'>
 											{service.label}
 										</span>
-										<span className='text-primary font-semibold'>
+										<span className=' font-semibold'>
 											{countService(service.id)}
 										</span>
 									</li>

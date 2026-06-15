@@ -17,11 +17,11 @@ export async function PUT(
 ) {
 	const { id } = await params
 
-	const { name, services, amounts, type, note } = await req.json()
+	const { name, services, amounts, type, note, transferDate, transferSlot } = await req.json()
 
 	await pool.query(
-		'UPDATE clients SET name=$1, type=$2, services=$3, amounts=$4, note=$5 WHERE id=$6',
-		[name, type, services, amounts, note, id],
+		'UPDATE clients SET name=$1, type=$2, services=$3, amounts=$4, note=$5, transfer_date=$6, transfer_slot=$7 WHERE id=$8',
+		[name, type, services, amounts, note, transferDate ?? null, transferSlot ?? null, id],
 	)
 
 	return Response.json({ success: true })
@@ -34,6 +34,11 @@ export async function GET(
 	const { id } = await params
 
 	const result = await pool.query('SELECT * FROM clients WHERE id = $1', [id])
+	const r = result.rows[0]
 
-	return Response.json(result.rows[0])
+	return Response.json({
+		...r,
+		transferDate: r.transfer_date,
+		transferSlot: r.transfer_slot,
+	})
 }

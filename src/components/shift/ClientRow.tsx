@@ -10,6 +10,7 @@ interface ClientRowProps {
 	name: string
 	services: string[]
 	type: 'issued' | 'transfer' | 'rejected'
+	note?: string
 	fetchClients: () => void
 }
 
@@ -33,6 +34,7 @@ export default function ClientRow({
 	name,
 	services,
 	type,
+	note,
 	fetchClients,
 }: ClientRowProps) {
 	const handleDelete = async () => {
@@ -53,7 +55,10 @@ export default function ClientRow({
 					<span>{name[0].toUpperCase()}</span>
 				</div>
 				<div className='min-w-0 flex-1 overflow-hidden'>
-					<p className='text-sm'>{name}</p>
+					<p className='flex items-center gap-1.5 text-sm'>
+						{name}
+						{note?.trim() && <span className='bg-amber h-2 w-2 shrink-0 rounded-full' />}
+					</p>
 					<p className='text-muted-foreground truncate text-xs'>
 						{services
 							.map(id => SERVICES.find(s => s.id === id)?.label ?? id)

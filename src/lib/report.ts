@@ -32,19 +32,20 @@ ${clients
 					const amount = c.amounts?.[id]
 					return amount ? `${label}(${amount} руб) ` : label
 				})
-				.join(' ')}`,
+				.join(' ')}${c.note?.trim() ? ` (${c.note.trim()})` : ''}`,
 	)
 	.join('\n')}
 
 Переносы/отказы:
 ${clients
 	.filter(c => c.type === 'transfer' || c.type === 'rejected')
-	.map(
-		c =>
-			`${c.name} ${c.services.map(
-				id => SERVICES.find(s => s.id === id)?.label ?? id,
-			)}`,
-	)
+	.map(c => {
+		const note = c.note?.trim() ? ` (${c.note.trim()})` : ''
+		const slot = c.transferDate && c.transferSlot
+			? ` → ${new Date(c.transferDate).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })} ${c.transferSlot}`
+			: ''
+		return `${c.name}${slot}${note}`
+	})
 	.join('\n')}
 Клиентопоток: ${clients.length}
 Выдано дк: ${countService('dk')}
