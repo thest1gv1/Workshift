@@ -10,7 +10,7 @@
 - Tailwind CSS v4 + CSS Modules
 - shadcn/ui
 - Nano Stores
-- Vercel (деплой)
+- свой vps (деплой)
 
 ## Будущий стек (этап 6+)
 - PostgreSQL

@@ -26,7 +26,7 @@ function AddForm() {
 	const [transferDate, setTransferDate] = useState('')
 	const [transferSlot, setTransferSlot] = useState('')
 
-	const dates = Array.from({ length: 15 }, (_, i) => {
+	const dates = Array.from({ length: 8 }, (_, i) => {
 		const d = new Date()
 		d.setDate(d.getDate() + i)
 		return d
@@ -41,12 +41,7 @@ function AddForm() {
 		'19:00–21:00',
 	]
 
-	const formatDate = (d: Date) =>
-		d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', weekday: 'short' })
-
 	const dateKey = (d: Date) => d.toISOString().slice(0, 10)
-
-	
 
 	const paidServices = SERVICES.filter(
 		s => selectedServices.includes(s.id) && s.hasAmount,
@@ -69,7 +64,15 @@ function AddForm() {
 			return
 		}
 
-		const data = { name, type, services: selectedServices, amounts, note, transferDate, transferSlot }
+		const data = {
+			name,
+			type,
+			services: selectedServices,
+			amounts,
+			note,
+			transferDate,
+			transferSlot,
+		}
 
 		if (id) {
 			await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/clients/${id}`, {
@@ -114,13 +117,15 @@ function AddForm() {
 					htmlFor='name'
 					className='text-muted-foreground text-xs tracking-wider uppercase'
 				>
-					фио клиента <span className='text-primary'>*</span>
+					клиент <span className='text-primary'>*</span>
 				</label>
 				<Input
 					id='name'
 					ref={nameRef}
 					value={name}
-					placeholder='Иванов И.И.'
+					placeholder='1234'
+					inputMode="numeric"
+					type="number"
 					aria-invalid={nameError}
 					onChange={e => {
 						setName(e.target.value)
@@ -204,7 +209,7 @@ function AddForm() {
 						<span className='text-muted-foreground text-xs tracking-wider uppercase'>
 							Дата
 						</span>
-						<div className='flex gap-2 overflow-x-auto pb-1 scrollbar-none'>
+						<div className='flex scrollbar-none gap-2 overflow-x-auto pb-1'>
 							{dates.map(d => {
 								const key = dateKey(d)
 								return (
@@ -218,8 +223,15 @@ function AddForm() {
 												: 'text-muted-foreground border-border',
 										)}
 									>
-										<div className='font-medium'>{d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })}</div>
-										<div className='opacity-70'>{d.toLocaleDateString('ru-RU', { weekday: 'short' })}</div>
+										<div className='font-medium'>
+											{d.toLocaleDateString('ru-RU', {
+												day: 'numeric',
+												month: 'short',
+											})}
+										</div>
+										<div className='opacity-70'>
+											{d.toLocaleDateString('ru-RU', { weekday: 'short' })}
+										</div>
 									</button>
 								)
 							})}
