@@ -10,11 +10,16 @@ import { Suspense, useEffect, useRef, useState } from 'react'
 
 import { toast } from 'sonner'
 import { ClientType } from '@/types/client'
+import { shiftStore } from '@/store/shiftStore'
+import { useStore } from '@nanostores/react'
 
 function AddForm() {
 	const router = useRouter()
 	const searchParams = useSearchParams()
 	const id = searchParams.get('id')
+
+	const activeShift = useStore(shiftStore)
+	const shiftIdParam = searchParams.get('shift_id')
 
 	const nameRef = useRef<HTMLInputElement>(null)
 	const [name, setName] = useState('')
@@ -58,7 +63,7 @@ function AddForm() {
 	}, [id])
 
 	const handleSave = async () => {
-		if (!name.trim()) {
+		if (name.length !== 6) {
 			setNameError(true)
 			nameRef.current?.focus()
 			return
@@ -72,6 +77,7 @@ function AddForm() {
 			note,
 			transferDate,
 			transferSlot,
+			shift_id: shiftIdParam ? Number(shiftIdParam) : (activeShift?.id ?? null),
 		}
 
 		if (id) {
@@ -90,7 +96,7 @@ function AddForm() {
 
 		toast.success(id ? 'Клиент обновлен' : 'Клиент добавлен')
 
-		router.push('/')
+		router.push(shiftIdParam ? `/history/${shiftIdParam}` : '/')
 	}
 
 	useEffect(() => {
@@ -124,14 +130,19 @@ function AddForm() {
 					ref={nameRef}
 					value={name}
 					placeholder='1234'
-					inputMode="numeric"
-					type="number"
+					inputMode='numeric'
+					type='number'
+					maxLength={6}
 					aria-invalid={nameError}
 					onChange={e => {
-						setName(e.target.value)
+						const val = e.target.value.replace(/\D/g, '').slice(0, 6)
+						setName(val)
 						if (nameError) setNameError(false)
 					}}
 				/>
+				<p className={`text-xs ${nameError ? 'text-destructive' : 'text-muted-foreground'}`}>
+					{nameError ? 'Введите ровно 6 цифр' : `${name.length} / 6`}
+				</p>
 			</div>
 
 			<div className='grid gap-2'>
@@ -296,15 +307,16 @@ function AddForm() {
 
 									<Input
 										className='flex-1'
-										value={amounts[service.id] || ''}
+										value={amounts[service.id] ? amounts[service.id].toLocaleString('ru-RU') : ''}
 										placeholder='0'
-										onChange={e =>
+										inputMode='numeric'
+										onChange={e => {
+											const raw = Number(e.target.value.replace(/\D/g, ''))
 											setAmounts(prev => ({
 												...prev,
-												[service.id]: Number(e.target.value),
+												[service.id]: raw,
 											}))
-										}
-										type='number'
+										}}
 									/>
 									<span className='text-muted-foreground'>₽</span>
 								</li>

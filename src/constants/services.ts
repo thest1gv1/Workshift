@@ -6,11 +6,11 @@ export const SERVICES = [
 	{ id: 'kesh', label: 'КЕШ', hasAmount: false },
 	{ id: 'ns', label: 'НС', hasAmount: false },
 	{ id: 'ns10', label: 'НС от 10к', hasAmount: true },
-	{ id: 'vtbo', label: 'ВТБО', hasAmount: false },
+	{ id: 'vtbo', label: 'Лич. каб.', hasAmount: false },
 	{ id: 'izp', label: 'ИЗП', hasAmount: false },
 	{ id: 'zplite', label: 'ЗП Лайт', hasAmount: false },
-	{ id: 'vtbplus', label: 'ВТБ+', hasAmount: false },
-	{ id: 'vtb_pay', label: 'ВТБ PAY', hasAmount: false },
+	{ id: 'vtbplus', label: 'Подписка+', hasAmount: false },
+	{ id: 'vtb_pay', label: 'PAY', hasAmount: false },
 	{ id: 'avtost', label: 'АвтоСт', hasAmount: true },
 	{ id: 'gruppa', label: 'Группа близкие', hasAmount: false },
 	{ id: 'kk', label: 'КК заявка', hasAmount: false },
@@ -24,7 +24,7 @@ export const SERVICES = [
 	{ id: 'pensiya', label: 'Пенсия', hasAmount: false },
 	{ id: 'ap_ss', label: 'АП СС', hasAmount: true },
 	{ id: 'ap_jku', label: 'АП ЖКУ', hasAmount: true },
-	{ id: 'vtb_mobile', label: 'ВТБ-мобайл', hasAmount: false },
+	{ id: 'vtb_mobile', label: 'Мобайл', hasAmount: false },
 	
 	{ id: 'ps', label: 'ПС кросс', hasAmount: false },
 	
@@ -32,6 +32,6 @@ export const SERVICES = [
 	{ id: 'ksp', label: 'КСП', hasAmount: true },
 	{ id: 'kob', label: 'КОБ/КРБ', hasAmount: false },
 	{ id: 'arrest', label: 'Арест', hasAmount: false },
-	{ id: 'blok', label: 'Блок ВТБО', hasAmount: false },
+	{ id: 'blok', label: 'Блок лич. каб.', hasAmount: false },
 	{ id: 'bum', label: 'Бум. подп.', hasAmount: false },
 ]
