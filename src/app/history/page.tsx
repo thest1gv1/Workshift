@@ -3,7 +3,13 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { ChevronLeft, ChevronRight, Trash2, MoreVertical } from 'lucide-react'
+import {
+	ChevronLeft,
+	ChevronRight,
+	Loader2,
+	Trash2,
+	MoreVertical,
+} from 'lucide-react'
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -20,8 +26,6 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import ShiftListSkeleton from '@/components/shift/ShiftListSkeleton'
-
 type Shift = {
 	id: number
 	started_at: string
@@ -71,7 +75,9 @@ export default function HistoryPage() {
 			</div>
 
 			{isLoading ? (
-				<ShiftListSkeleton />
+				<div className='flex justify-center py-8'>
+					<Loader2 className='text-muted-foreground animate-spin' size={24} />
+				</div>
 			) : shifts.length === 0 ? (
 				<p className='text-muted-foreground py-8 text-center text-sm'>
 					Смен пока нет

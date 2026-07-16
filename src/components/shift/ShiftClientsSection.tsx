@@ -2,11 +2,10 @@
 
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { Copy, Plus } from 'lucide-react'
+import { Copy, Loader2, Plus } from 'lucide-react'
 import { toast } from 'sonner'
 import ShiftCard from '@/components/shift/ShiftCard'
 import ClientRow from '@/components/shift/ClientRow'
-import ClientListSkeleton from '@/components/shift/ClientListSkeleton'
 import { copyReport, generateReport } from '@/lib/report'
 import { ClientInterface } from '@/types/client'
 import { Settings } from '@/store/settingsStore'
@@ -36,7 +35,9 @@ export default function ShiftClientsSection({
 				<h2>Клиенты</h2>
 
 				{clientsLoading ? (
-					<ClientListSkeleton />
+					<div className='flex justify-center py-8'>
+						<Loader2 className='text-muted-foreground animate-spin' size={24} />
+					</div>
 				) : clients.length === 0 ? (
 					<p className='text-muted-foreground py-8 text-center text-sm'>
 						Клиентов нет — нажмите «Добавить клиента»

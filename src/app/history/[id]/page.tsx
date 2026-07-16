@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button'
 import { ChevronLeft, Loader2, LogOut } from 'lucide-react'
 import { ClientInterface } from '@/types/client'
 import ShiftClientsSection from '@/components/shift/ShiftClientsSection'
-import { Skeleton } from '@/components/ui/skeleton'
 import { useStore } from '@nanostores/react'
 import { settingsStore } from '@/store/settingsStore'
 
@@ -60,14 +59,12 @@ export default function ShiftDetailPage() {
 					</Button>
 				</Link>
 				<h1 className='text-lg'>
-					{shift ? (
-						new Date(shift.started_at).toLocaleDateString('ru-RU', {
-							day: 'numeric',
-							month: 'long',
-						})
-					) : (
-						<Skeleton className='h-6 w-24' />
-					)}
+					{shift
+						? new Date(shift.started_at).toLocaleDateString('ru-RU', {
+								day: 'numeric',
+								month: 'long',
+							})
+						: '...'}
 				</h1>
 			</div>
 

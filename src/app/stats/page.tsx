@@ -4,8 +4,7 @@ import { SERVICES } from '@/constants/services'
 import { ClientInterface } from '@/types/client'
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { ArrowUpDown, ChevronLeft, ChevronRight } from 'lucide-react'
-import StatsListSkeleton from '@/components/shift/StatsListSkeleton'
+import { ArrowUpDown, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react'
 
 function toMonthKey(date: Date) {
 	return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
@@ -78,7 +77,9 @@ export default function StatsPage() {
 					</Button>
 				</div>
 				{isLoading ? (
-					<StatsListSkeleton />
+					<div className='flex justify-center py-8'>
+						<Loader2 className='text-muted-foreground animate-spin' size={24} />
+					</div>
 				) : clients.length === 0 ? (
 					<p className='text-muted-foreground py-8 text-center text-sm'>
 						Нет данных за этот месяц

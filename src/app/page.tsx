@@ -3,6 +3,7 @@
 import { useStore } from '@nanostores/react'
 import { settingsStore } from '@/store/settingsStore'
 import { useEffect, useState } from 'react'
+import { flushSync } from 'react-dom'
 import { ClientInterface } from '@/types/client'
 import { shiftStore, shiftLoadedStore } from '@/store/shiftStore'
 import ShiftStart from '@/components/shift/ShiftStart'
@@ -29,6 +30,10 @@ export default function Home() {
 				},
 			)
 			const shift = await res.json()
+			flushSync(() => {
+				setClients([])
+				setClientsLoading(false)
+			})
 			shiftStore.set(shift)
 		} finally {
 			setIsStarting(false)
