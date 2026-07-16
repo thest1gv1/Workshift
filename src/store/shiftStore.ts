@@ -6,3 +6,5 @@ export const shiftStore = atom<{
 	ended_at: string | null
 	is_active: boolean
 } | null>(null)
+
+export const shiftLoadedStore = atom(false)

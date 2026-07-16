@@ -1,10 +1,8 @@
 import { SERVICES } from '@/constants/services'
 import type { Settings } from '@/store/settingsStore'
-import { Client } from '@/types/client'
+import { ClientInterface } from '@/types/client'
 
-
-
-export function generateReport(clients: Client[], settings: Settings) {
+export function generateReport(clients: ClientInterface[], settings: Settings) {
 	const now = new Date()
 	const day = String(now.getDate()).padStart(2, '0')
 	const month = String(now.getMonth() + 1).padStart(2, '0')
@@ -41,9 +39,10 @@ ${clients
 	.filter(c => c.type === 'transfer' || c.type === 'rejected')
 	.map(c => {
 		const note = c.note?.trim() ? ` (${c.note.trim()})` : ''
-		const slot = c.transferDate && c.transferSlot
-			? ` → ${new Date(c.transferDate).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })} ${c.transferSlot}`
-			: ''
+		const slot =
+			c.transferDate && c.transferSlot
+				? ` → ${new Date(c.transferDate).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })} ${c.transferSlot}`
+				: ''
 		return `${c.name}${slot}${note}`
 	})
 	.join('\n')}
@@ -75,6 +74,13 @@ ${clients
 КОБ/КРБ (мин 0,8):${countService('kob')}
 Арест: ${countService('arrest')}
 Блокировка ВТБо: ${countService('blok')}`
+}
 
-
+export const copyReport = (text: string) => {
+	const textarea = document.createElement('textarea')
+	textarea.value = text
+	document.body.appendChild(textarea)
+	textarea.select()
+	document.execCommand('copy')
+	document.body.removeChild(textarea)
 }

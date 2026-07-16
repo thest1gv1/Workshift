@@ -70,31 +70,36 @@ export default function ClientRow({
 
 	return (
 		<>
-			<li className='bg-card border-border flex items-center gap-2 overflow-hidden rounded-xl border p-4 transition-colors duration-150'>
+			<li className='bg-card border-border relative flex items-center gap-2 overflow-hidden rounded-xl border p-4 transition-colors duration-150'>
 				<Link
 					href={'/add?id=' + id}
-					className='flex min-w-0 flex-1 items-center gap-2'
-				>
-					<div className='bg-primary/20 text-primary flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-xs'>
-						<span>{index}</span>
-					</div>
-					<div className='min-w-0 flex-1 overflow-hidden'>
-						<p className='flex items-center gap-1.5 text-sm'>
-							{name}
-							{note?.trim() && <span className='bg-amber h-2 w-2 shrink-0 rounded-full' />}
-						</p>
-						<p className='text-muted-foreground truncate text-xs'>
-							{services
-								.map(id => SERVICES.find(s => s.id === id)?.label ?? id)
-								.join(', ')}
-						</p>
-					</div>
-					<Badge variant={badgeVariant[type]}>{badgeLabel[type]}</Badge>
-				</Link>
+					className='absolute inset-0 flex min-w-0 flex-1 items-center gap-2'
+				/>
+				<div className='bg-primary/20 text-primary relative flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-xs'>
+					<span>{index}</span>
+				</div>
+				<div className='min-w-0 flex-1 overflow-hidden'>
+					<p className='flex items-center gap-1.5 text-sm'>
+						{name}
+						{note?.trim() && (
+							<span className='bg-amber h-2 w-2 shrink-0 rounded-full' />
+						)}
+					</p>
+					<p className='text-muted-foreground truncate text-xs'>
+						{services
+							.map(id => SERVICES.find(s => s.id === id)?.label ?? id)
+							.join(', ')}
+					</p>
+				</div>
+				<Badge variant={badgeVariant[type]}>{badgeLabel[type]}</Badge>
 
 				<DropdownMenu>
-					<DropdownMenuTrigger asChild>
-						<Button variant='ghost' size='icon' className='text-muted-foreground shrink-0'>
+					<DropdownMenuTrigger asChild className='relative z-10'>
+						<Button
+							variant='ghost'
+							size='icon'
+							className='text-muted-foreground shrink-0'
+						>
 							<MoreVertical size={16} />
 						</Button>
 					</DropdownMenuTrigger>

@@ -1,6 +1,6 @@
 export type ClientType = 'issued' | 'transfer' | 'rejected'
 
-export interface Client {
+export interface ClientInterface {
 	id: string
 	name: string
 	services: string[]

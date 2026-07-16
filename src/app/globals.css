@@ -97,7 +97,7 @@
 	--primary-foreground: #000000;
 	--secondary: #1a2236;
 	--secondary-foreground: #f0f4ff;
-	--muted: #111827;
+	--muted: #1a2236;
 	--muted-foreground: #8b96b0;
 	--accent: #1a2236;
 	--accent-foreground: #f0f4ff;
@@ -125,7 +125,9 @@
 @layer utilities {
 	.scrollbar-none {
 		scrollbar-width: none;
-		&::-webkit-scrollbar { display: none; }
+		&::-webkit-scrollbar {
+			display: none;
+		}
 	}
 }
 

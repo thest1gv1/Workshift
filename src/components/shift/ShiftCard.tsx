@@ -1,12 +1,11 @@
 'use client'
 
 import StatBox from '@/components/shift/StatBox'
-import { Client } from '@/types/client'
-
+import { ClientInterface } from '@/types/client'
 
 interface ShiftCardProps {
 	plan: number
-	clients : Client[]
+	clients: ClientInterface[]
 }
 
 export default function ShiftCard({ plan, clients }: ShiftCardProps) {

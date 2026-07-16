@@ -9,6 +9,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense, useEffect, useRef, useState } from 'react'
 
 import { toast } from 'sonner'
+import { X } from 'lucide-react'
 import { ClientType } from '@/types/client'
 import { shiftStore } from '@/store/shiftStore'
 import { useStore } from '@nanostores/react'
@@ -115,9 +116,23 @@ function AddForm() {
 			})
 	}, [id])
 
+	const close = () => {
+		router.push(shiftIdParam ? `/history/${shiftIdParam}` : '/')
+	}
+
 	return (
 		<div className='grid gap-5'>
-			<h1>Новый клиент</h1>
+			<div className='flex items-center justify-between'>
+				<h1>{id ? 'Клиент' : 'Новый клиент'}</h1>
+				<Button
+					variant='ghost'
+					size='icon'
+					className='rounded-full'
+					onClick={close}
+				>
+					<X />
+				</Button>
+			</div>
 			<div className='grid gap-2'>
 				<label
 					htmlFor='name'
@@ -140,7 +155,9 @@ function AddForm() {
 						if (nameError) setNameError(false)
 					}}
 				/>
-				<p className={`text-xs ${nameError ? 'text-destructive' : 'text-muted-foreground'}`}>
+				<p
+					className={`text-xs ${nameError ? 'text-destructive' : 'text-muted-foreground'}`}
+				>
 					{nameError ? 'Введите ровно 6 цифр' : `${name.length} / 6`}
 				</p>
 			</div>
@@ -307,7 +324,11 @@ function AddForm() {
 
 									<Input
 										className='flex-1'
-										value={amounts[service.id] ? amounts[service.id].toLocaleString('ru-RU') : ''}
+										value={
+											amounts[service.id]
+												? amounts[service.id].toLocaleString('ru-RU')
+												: ''
+										}
 										placeholder='0'
 										inputMode='numeric'
 										onChange={e => {
