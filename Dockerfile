@@ -4,7 +4,7 @@ WORKDIR /app
 ENV HUSKY=0
 
 COPY package.json package-lock.json ./
-RUN npm ci
+RUN npm ci --no-audit --no-fund
 
 FROM node:22-bookworm-slim AS builder
 
@@ -16,7 +16,7 @@ ENV NEXT_PUBLIC_BASE_PATH=$NEXT_PUBLIC_BASE_PATH
 COPY --from=dependencies /app/node_modules ./node_modules
 COPY . .
 RUN npm run build
-RUN npm prune --omit=dev --ignore-scripts
+RUN npm prune --omit=dev --ignore-scripts --no-audit --no-fund
 
 FROM node:22-bookworm-slim AS runner
 
@@ -37,4 +37,3 @@ COPY --from=builder /app/scripts/start-container.mjs ./scripts/start-container.m
 EXPOSE 3000
 
 CMD ["node", "scripts/start-container.mjs"]
-
