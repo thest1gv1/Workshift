@@ -11,7 +11,7 @@ export default function LoginPage() {
 	const [code, setCode] = useState('')
 
 	const handleLogin = async () => {
-		const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/auth`, {
+		const res = await fetch('/api/auth', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ key: code }),
@@ -22,7 +22,7 @@ export default function LoginPage() {
 		if (data.ok) {
 			// сохранить в localStorage и редирект
 			document.cookie = 'auth=true; path=/'
-			window.location.href = process.env.NEXT_PUBLIC_BASE_PATH + '/'
+			window.location.href = '/'
 		} else {
 			toast.error('Неверный код доступа')
 		}

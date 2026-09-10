@@ -34,7 +34,7 @@
 2. Если `.env.local` ещё нет, скопируй `.env.example` в `.env.local` и задай `AUTH_KEY`. Существующий файл не перезаписывай: обнови только нужные значения.
 3. Установи зависимости: `npm install`.
 4. Создай таблицы: `npm run db:migrate`.
-5. Запусти приложение: `npm run dev`. Адрес: `http://localhost:3000/workshift`.
+5. Запусти приложение: `npm run dev`. Адрес: `http://localhost:3000`.
 
 Локальный `DATABASE_URL`: `postgresql://workshift:workshift_local@localhost:5433/workshift`.
 Redis доступен на `localhost:6380`; приложение пока его не использует.

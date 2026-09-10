@@ -29,7 +29,7 @@ export default function ShiftDetailPage() {
 	const [isEnding, setIsEnding] = useState(false)
 
 	const fetchData = useCallback(() => {
-		fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/shifts/${id}`)
+		fetch(`/api/shifts/${id}`)
 			.then(res => res.json())
 			.then(data => {
 				setShift(data.shift)
@@ -45,12 +45,9 @@ export default function ShiftDetailPage() {
 		if (isEnding) return
 		setIsEnding(true)
 		try {
-			const response = await fetch(
-				`${process.env.NEXT_PUBLIC_BASE_PATH}/api/shifts/${id}`,
-				{
-					method: 'PATCH',
-				},
-			)
+			const response = await fetch(`/api/shifts/${id}`, {
+				method: 'PATCH',
+			})
 			if (!response.ok) throw new Error('Failed to end shift')
 			if (shiftStore.get()?.id === Number(id)) {
 				shiftStore.set(null)

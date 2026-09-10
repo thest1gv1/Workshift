@@ -31,12 +31,9 @@ export default function Home() {
 	const startShift = async () => {
 		setIsStarting(true)
 		try {
-			const res = await fetch(
-				`${process.env.NEXT_PUBLIC_BASE_PATH}/api/shifts`,
-				{
-					method: 'POST',
-				},
-			)
+			const res = await fetch('/api/shifts', {
+				method: 'POST',
+			})
 			if (!res.ok) throw new Error('Failed to start shift')
 			const shift = await res.json()
 			resetShiftClients(shift.id)
@@ -53,12 +50,9 @@ export default function Home() {
 		if (!activeShift || isEnding) return
 		setIsEnding(true)
 		try {
-			const res = await fetch(
-				`${process.env.NEXT_PUBLIC_BASE_PATH}/api/shifts/${activeShift.id}`,
-				{
-					method: 'PATCH',
-				},
-			)
+			const res = await fetch(`/api/shifts/${activeShift.id}`, {
+				method: 'PATCH',
+			})
 			if (!res.ok) throw new Error('Failed to end shift')
 			shiftStore.set(null)
 			resetShiftClients()
