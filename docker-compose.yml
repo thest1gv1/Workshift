@@ -2,5 +2,9 @@ services:
   app:
     image: thest1gv1/workshift:timeweb-db-v1
     restart: unless-stopped
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      AUTH_KEY: ${AUTH_KEY}
     ports:
       - '${APP_PORT:-3000}:3000'
