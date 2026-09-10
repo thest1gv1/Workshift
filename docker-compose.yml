@@ -1,9 +1,6 @@
 services:
   app:
-    build:
-      context: .
-      args:
-        NEXT_PUBLIC_BASE_PATH: ${NEXT_PUBLIC_BASE_PATH:-/workshift}
+    image: thest1gv1/workshift:551f048
     restart: unless-stopped
     environment:
       DB_HOST: db
