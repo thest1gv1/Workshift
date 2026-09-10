@@ -5,7 +5,8 @@ import { drizzle } from 'drizzle-orm/node-postgres'
 import { migrate } from 'drizzle-orm/node-postgres/migrator'
 import pg from 'pg'
 
-const requiredVariables = [
+const databaseUrl = process.env.DATABASE_URL?.trim()
+const requiredLegacyVariables = [
 	'DB_HOST',
 	'DB_PORT',
 	'DB_NAME',
@@ -13,19 +14,25 @@ const requiredVariables = [
 	'DB_PASSWORD',
 ]
 
-for (const variable of requiredVariables) {
-	if (!process.env[variable]) {
-		throw new Error(`${variable} is required`)
+if (!databaseUrl) {
+	for (const variable of requiredLegacyVariables) {
+		if (!process.env[variable]) {
+			throw new Error(
+				`DATABASE_URL or ${requiredLegacyVariables.join(', ')} are required`,
+			)
+		}
 	}
 }
 
-const connection = {
-	host: process.env.DB_HOST,
-	port: Number(process.env.DB_PORT),
-	database: process.env.DB_NAME,
-	user: process.env.DB_USER,
-	password: process.env.DB_PASSWORD,
-}
+const connection = databaseUrl
+	? { connectionString: databaseUrl }
+	: {
+			host: process.env.DB_HOST,
+			port: Number(process.env.DB_PORT),
+			database: process.env.DB_NAME,
+			user: process.env.DB_USER,
+			password: process.env.DB_PASSWORD,
+		}
 
 const pool = new pg.Pool(connection)
 let connected = false
@@ -48,10 +55,12 @@ console.log('Applying database migrations...')
 await migrate(drizzle(pool), { migrationsFolder: './migrations/drizzle' })
 await pool.end()
 
-const encodedUser = encodeURIComponent(connection.user)
-const encodedPassword = encodeURIComponent(connection.password)
-const encodedDatabase = encodeURIComponent(connection.database)
-process.env.DATABASE_URL = `postgresql://${encodedUser}:${encodedPassword}@${connection.host}:${connection.port}/${encodedDatabase}`
+if (!databaseUrl && 'user' in connection) {
+	const encodedUser = encodeURIComponent(connection.user ?? '')
+	const encodedPassword = encodeURIComponent(connection.password ?? '')
+	const encodedDatabase = encodeURIComponent(connection.database ?? '')
+	process.env.DATABASE_URL = `postgresql://${encodedUser}:${encodedPassword}@${connection.host}:${connection.port}/${encodedDatabase}`
+}
 
 console.log('Starting Next.js...')
 const nextProcess = spawn(
