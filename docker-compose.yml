@@ -1,6 +1,6 @@
 services:
   app:
-    image: thest1gv1/workshift:root-localdb-v1
+    image: thest1gv1/workshift:timeweb-ai-v1
     restart: unless-stopped
     environment:
       DB_HOST: db
@@ -8,6 +8,7 @@ services:
       DB_NAME: workshift
       DB_USER: workshift
       DB_PASSWORD: ${POSTGRES_PASSWORD}
+      TIMEWEB_AI_TOKEN: ${TIMEWEB_AI_TOKEN}
       OPENAI_API_KEY: ${OPENAI_API_KEY}
       AUTH_KEY: ${AUTH_KEY}
     ports:

@@ -6,6 +6,7 @@ export const runtime = 'nodejs'
 
 const MAX_AUDIO_SIZE = 8 * 1024 * 1024
 const OPENAI_API_URL = 'https://api.openai.com/v1'
+const TIMEWEB_AI_API_URL = 'https://api.timeweb.ai/v1'
 
 type ParsedService = {
 	id: string
@@ -97,14 +98,36 @@ function matchClientName(transcript: string) {
 	return `${surname} ${match[2].toLocaleUpperCase('ru-RU')}.${match[3].toLocaleUpperCase('ru-RU')}.`
 }
 
-async function openAIRequest(path: string, init: RequestInit) {
-	const apiKey = process.env.OPENAI_API_KEY
-
-	if (!apiKey) {
-		throw new Error('OPENAI_API_KEY не настроен на сервере')
+function getAIProvider() {
+	const timewebToken = process.env.TIMEWEB_AI_TOKEN?.trim()
+	if (timewebToken) {
+		return {
+			apiKey: timewebToken,
+			apiUrl: TIMEWEB_AI_API_URL,
+			providerName: 'Timeweb AI Gateway',
+			transcriptionModel: 'openai/gpt-4o-mini-transcribe',
+			responseModel: 'openai/gpt-5-nano',
+		}
 	}
 
-	const response = await fetch(`${OPENAI_API_URL}${path}`, {
+	const openAIKey = process.env.OPENAI_API_KEY?.trim()
+	if (openAIKey) {
+		return {
+			apiKey: openAIKey,
+			apiUrl: OPENAI_API_URL,
+			providerName: 'OpenAI API',
+			transcriptionModel: 'gpt-transcribe',
+			responseModel: 'gpt-5-nano',
+		}
+	}
+
+	throw new Error('TIMEWEB_AI_TOKEN или OPENAI_API_KEY не настроен на сервере')
+}
+
+async function aiRequest(path: string, init: RequestInit) {
+	const { apiKey, apiUrl, providerName } = getAIProvider()
+
+	const response = await fetch(`${apiUrl}${path}`, {
 		...init,
 		headers: {
 			Authorization: `Bearer ${apiKey}`,
@@ -117,7 +140,7 @@ async function openAIRequest(path: string, init: RequestInit) {
 			.json()
 			.catch(() => null)) as OpenAIErrorBody | null
 		throw new Error(
-			body?.error?.message || `OpenAI API: ошибка ${response.status}`,
+			body?.error?.message || `${providerName}: ошибка ${response.status}`,
 		)
 	}
 
@@ -125,16 +148,17 @@ async function openAIRequest(path: string, init: RequestInit) {
 }
 
 async function transcribe(audio: File) {
+	const { transcriptionModel } = getAIProvider()
 	const formData = new FormData()
 	formData.set('file', audio, audio.name || 'voice.webm')
-	formData.set('model', 'gpt-transcribe')
+	formData.set('model', transcriptionModel)
 	formData.set('language', 'ru')
 	formData.set(
 		'prompt',
 		`Короткая запись банковского сотрудника с названиями услуг и суммами. Термины: ${voiceTerms.join(', ')}.`,
 	)
 
-	const response = await openAIRequest('/audio/transcriptions', {
+	const response = await aiRequest('/audio/transcriptions', {
 		method: 'POST',
 		body: formData,
 	})
@@ -148,6 +172,7 @@ async function transcribe(audio: File) {
 }
 
 async function extractVoiceData(transcript: string): Promise<ParsedVoiceData> {
+	const { responseModel } = getAIProvider()
 	const catalog = SERVICES.map(service => {
 		const aliases = VOICE_SERVICE_ALIASES[service.id] ?? []
 		return [
@@ -159,11 +184,11 @@ async function extractVoiceData(transcript: string): Promise<ParsedVoiceData> {
 			.join('; ')
 	}).join('\n')
 
-	const response = await openAIRequest('/responses', {
+	const response = await aiRequest('/responses', {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify({
-			model: 'gpt-5-nano',
+			model: responseModel,
 			instructions: [
 				'Ты извлекаешь имя клиента, банковские услуги и суммы из русской расшифровки.',
 				'Имя возвращай только если оно явно произнесено. Сохраняй фамилию и инициалы в формате «Петров В.С.». Иначе верни null.',
