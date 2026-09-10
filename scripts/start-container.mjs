@@ -5,11 +5,29 @@ import { drizzle } from 'drizzle-orm/node-postgres'
 import { migrate } from 'drizzle-orm/node-postgres/migrator'
 import pg from 'pg'
 
-if (!process.env.DATABASE_URL) {
-	throw new Error('DATABASE_URL is required')
+const requiredVariables = [
+	'DB_HOST',
+	'DB_PORT',
+	'DB_NAME',
+	'DB_USER',
+	'DB_PASSWORD',
+]
+
+for (const variable of requiredVariables) {
+	if (!process.env[variable]) {
+		throw new Error(`${variable} is required`)
+	}
 }
 
-const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL })
+const connection = {
+	host: process.env.DB_HOST,
+	port: Number(process.env.DB_PORT),
+	database: process.env.DB_NAME,
+	user: process.env.DB_USER,
+	password: process.env.DB_PASSWORD,
+}
+
+const pool = new pg.Pool(connection)
 let connected = false
 
 for (let attempt = 1; attempt <= 30; attempt += 1) {
@@ -29,6 +47,11 @@ if (!connected) throw new Error('Could not connect to PostgreSQL')
 console.log('Applying database migrations...')
 await migrate(drizzle(pool), { migrationsFolder: './migrations/drizzle' })
 await pool.end()
+
+const encodedUser = encodeURIComponent(connection.user)
+const encodedPassword = encodeURIComponent(connection.password)
+const encodedDatabase = encodeURIComponent(connection.database)
+process.env.DATABASE_URL = `postgresql://${encodedUser}:${encodedPassword}@${connection.host}:${connection.port}/${encodedDatabase}`
 
 console.log('Starting Next.js...')
 const nextProcess = spawn(

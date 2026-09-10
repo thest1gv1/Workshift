@@ -1,10 +1,31 @@
 services:
   app:
-    image: thest1gv1/workshift:timeweb-db-v1
+    image: thest1gv1/workshift:551f048
     restart: unless-stopped
     environment:
-      DATABASE_URL: ${DATABASE_URL}
+      DB_HOST: db
+      DB_PORT: '5432'
+      DB_NAME: workshift
+      DB_USER: workshift
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
       OPENAI_API_KEY: ${OPENAI_API_KEY}
       AUTH_KEY: ${AUTH_KEY}
     ports:
       - '${APP_PORT:-3000}:3000'
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: workshift
+      POSTGRES_USER: workshift
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U workshift -d workshift']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
