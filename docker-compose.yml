@@ -1,40 +1,35 @@
-# Local development services. Next.js runs separately with npm run dev.
-name: workshift
-
 services:
+  app:
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_BASE_PATH: ${NEXT_PUBLIC_BASE_PATH:-/workshift}
+    restart: unless-stopped
+    environment:
+      DB_HOST: db
+      DB_PORT: '5432'
+      DB_NAME: workshift
+      DB_USER: workshift
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      AUTH_KEY: ${AUTH_KEY}
+      NEXT_PUBLIC_BASE_PATH: ${NEXT_PUBLIC_BASE_PATH:-/workshift}
+    ports:
+      - '${APP_PORT:-3000}:3000'
+    depends_on:
+      db:
+        condition: service_healthy
+
   db:
-    image: postgres:18
+    image: postgres:18-alpine
     restart: unless-stopped
     environment:
       POSTGRES_DB: workshift
       POSTGRES_USER: workshift
-      # Local development credentials only.
-      POSTGRES_PASSWORD: workshift_local
-    ports:
-      - '127.0.0.1:5433:5432'
-    volumes:
-      - postgres_data:/var/lib/postgresql
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U workshift -d workshift']
       interval: 5s
       timeout: 5s
       retries: 10
       start_period: 10s
-
-  redis:
-    image: redis:8-alpine
-    restart: unless-stopped
-    command: ['redis-server', '--appendonly', 'yes']
-    ports:
-      - '127.0.0.1:6380:6379'
-    volumes:
-      - redis_data:/data
-    healthcheck:
-      test: ['CMD', 'redis-cli', 'ping']
-      interval: 5s
-      timeout: 5s
-      retries: 10
-
-volumes:
-  postgres_data:
-  redis_data:

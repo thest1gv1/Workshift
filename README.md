@@ -30,7 +30,7 @@
 
 ## Локальная база данных
 
-1. Запусти PostgreSQL и Redis: `docker compose up -d`.
+1. Запусти PostgreSQL и Redis: `docker compose -f docker-compose.dev.yml up -d`.
 2. Если `.env.local` ещё нет, скопируй `.env.example` в `.env.local` и задай `AUTH_KEY`. Существующий файл не перезаписывай: обнови только нужные значения.
 3. Установи зависимости: `npm install`.
 4. Создай таблицы: `npm run db:migrate`.
