@@ -15,7 +15,7 @@ interface ActiveShiftProps {
 	settings: Settings
 	clients: ClientInterface[]
 	clientsLoading: boolean
-	onFetchClients: () => void
+	onFetchClients?: () => void
 	onEndShift: () => void
 	isEnding: boolean
 }

@@ -7,6 +7,7 @@ import { Trash2, MoreVertical } from 'lucide-react'
 import Link from 'next/link'
 import { toast } from 'sonner'
 import { useState } from 'react'
+import { loadCurrentShift, removeClientFromStore } from '@/store/clientsStore'
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -31,7 +32,7 @@ interface ClientRowProps {
 	services: string[]
 	type: 'issued' | 'transfer' | 'rejected'
 	note?: string
-	fetchClients: () => void
+	fetchClients?: () => void
 }
 
 const badgeVariant: Record<
@@ -59,13 +60,28 @@ export default function ClientRow({
 	fetchClients,
 }: ClientRowProps) {
 	const [confirmOpen, setConfirmOpen] = useState(false)
+	const [isDeleting, setIsDeleting] = useState(false)
 
 	const handleDelete = async () => {
-		await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/clients/${id}`, {
-			method: 'DELETE',
-		})
-		fetchClients()
-		toast.success('Клиент удалён')
+		if (isDeleting) return
+		setIsDeleting(true)
+		try {
+			await loadCurrentShift()
+			const response = await fetch(
+				`${process.env.NEXT_PUBLIC_BASE_PATH}/api/clients/${id}`,
+				{
+					method: 'DELETE',
+				},
+			)
+			if (!response.ok) throw new Error('Delete failed')
+			removeClientFromStore(id)
+			fetchClients?.()
+			toast.success('Клиент удалён')
+		} catch {
+			toast.error('Не удалось удалить клиента. Попробуйте ещё раз.')
+		} finally {
+			setIsDeleting(false)
+		}
 	}
 
 	return (
@@ -128,6 +144,7 @@ export default function ClientRow({
 						<AlertDialogAction
 							className='bg-destructive text-destructive-foreground hover:bg-destructive/90'
 							onClick={handleDelete}
+							disabled={isDeleting}
 						>
 							Удалить
 						</AlertDialogAction>

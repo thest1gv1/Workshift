@@ -15,7 +15,7 @@ interface ShiftClientsSectionProps {
 	clientsLoading?: boolean
 	settings: Settings
 	addHref: string
-	onFetchClients: () => void
+	onFetchClients?: () => void
 	endShiftSlot?: React.ReactNode
 }
 

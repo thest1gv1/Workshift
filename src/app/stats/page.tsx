@@ -21,6 +21,7 @@ export default function StatsPage() {
 	const [isLoading, setIsLoading] = useState(true)
 	const [month, setMonth] = useState(toMonthKey(new Date()))
 	const [asc, setAsc] = useState(false)
+	const canGoNext = month < toMonthKey(new Date())
 
 	useEffect(() => {
 		setIsLoading(true)
@@ -37,9 +38,11 @@ export default function StatsPage() {
 	}
 
 	const nextMonth = () => {
-		const [y, m] = month.split('-').map(Number)
-		const d = new Date(y, m)
-		setMonth(toMonthKey(d))
+		setMonth(current => {
+			const [y, m] = current.split('-').map(Number)
+			const next = toMonthKey(new Date(y, m))
+			return next <= toMonthKey(new Date()) ? next : current
+		})
 	}
 
 	const countService = (id: string) =>
@@ -56,7 +59,13 @@ export default function StatsPage() {
 				<span className='text-sm font-medium capitalize'>
 					{formatMonthLabel(month)}
 				</span>
-				<Button variant='ghost' size='icon' onClick={nextMonth}>
+				<Button
+					variant='ghost'
+					size='icon'
+					onClick={nextMonth}
+					disabled={!canGoNext}
+					aria-label='Следующий месяц'
+				>
 					<ChevronRight />
 				</Button>
 			</div>

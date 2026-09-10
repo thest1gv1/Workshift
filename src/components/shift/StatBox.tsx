@@ -1,14 +1,13 @@
 interface StatBoxProps {
-  value: number
-  label: string
+	value: number
+	label: string
 }
 
-
-export default function StatBox({value, label}: StatBoxProps) {
-  return (
-    <div className="flex flex-col items-center gap-1 p-3 bg-secondary rounded-lg">
-      <span className="text-2xl font-semibold">{value}</span>
-      <span className="text-xs text-muted-foreground">{label}</span>
-    </div>
-  )
+export default function StatBox({ value, label }: StatBoxProps) {
+	return (
+		<div className='bg-secondary flex flex-col items-center gap-1 rounded-lg p-3'>
+			<span className='text-2xl font-semibold'>{value}</span>
+			<span className='text-muted-foreground text-xs'>{label}</span>
+		</div>
+	)
 }

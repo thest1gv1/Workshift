@@ -1,8 +1,12 @@
-import pool from '@/lib/db'
+import { eq } from 'drizzle-orm'
+import db from '@/lib/db'
+import { shifts } from '@/lib/db/schema'
 
 export async function GET() {
-	const result = await pool.query(
-		'SELECT * FROM shifts WHERE is_active = true LIMIT 1',
-	)
-	return Response.json(result.rows[0] ?? null)
+	const [shift] = await db
+		.select()
+		.from(shifts)
+		.where(eq(shifts.is_active, true))
+		.limit(1)
+	return Response.json(shift ?? null)
 }

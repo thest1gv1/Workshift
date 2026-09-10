@@ -25,9 +25,9 @@ export const SERVICES = [
 	{ id: 'ap_ss', label: 'АП СС', hasAmount: true },
 	{ id: 'ap_jku', label: 'АП ЖКУ', hasAmount: true },
 	{ id: 'vtb_mobile', label: 'Мобайл', hasAmount: false },
-	
+
 	{ id: 'ps', label: 'ПС кросс', hasAmount: false },
-	
+
 	{ id: 'som', label: 'СОМ', hasAmount: true },
 	{ id: 'ksp', label: 'КСП', hasAmount: true },
 	{ id: 'kob', label: 'КОБ/КРБ', hasAmount: false },

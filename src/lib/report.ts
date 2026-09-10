@@ -2,8 +2,12 @@ import { SERVICES } from '@/constants/services'
 import type { Settings } from '@/store/settingsStore'
 import { ClientInterface } from '@/types/client'
 
-export function generateReport(clients: ClientInterface[], settings: Settings) {
-	const now = new Date()
+export function generateReport(
+	clients: ClientInterface[],
+	settings: Settings,
+	shiftDate?: string,
+) {
+	const now = shiftDate ? new Date(shiftDate) : new Date()
 	const day = String(now.getDate()).padStart(2, '0')
 	const month = String(now.getMonth() + 1).padStart(2, '0')
 	const date = `${day}.${month}`
@@ -81,6 +85,9 @@ export const copyReport = (text: string) => {
 	textarea.value = text
 	document.body.appendChild(textarea)
 	textarea.select()
-	document.execCommand('copy')
-	document.body.removeChild(textarea)
+	try {
+		return document.execCommand('copy')
+	} finally {
+		document.body.removeChild(textarea)
+	}
 }

@@ -1,16 +1,17 @@
-import pool from '@/lib/db'
+import { eq, sql } from 'drizzle-orm'
+import db from '@/lib/db'
+import { clients, shifts } from '@/lib/db/schema'
+import { serializeClient } from '@/lib/db/client'
 
 export async function PATCH(
 	_req: Request,
 	{ params }: { params: Promise<{ id: string }> },
 ) {
 	const { id } = await params
-
-	await pool.query(
-		'UPDATE shifts SET ended_at = NOW(), is_active = false WHERE id = $1',
-		[id],
-	)
-
+	await db
+		.update(shifts)
+		.set({ ended_at: sql`now()`, is_active: false })
+		.where(eq(shifts.id, Number(id)))
 	return Response.json({ success: true })
 }
 
@@ -19,8 +20,10 @@ export async function DELETE(
 	{ params }: { params: Promise<{ id: string }> },
 ) {
 	const { id } = await params
-	await pool.query('DELETE FROM clients WHERE shift_id = $1', [id])
-	await pool.query('DELETE FROM shifts WHERE id = $1', [id])
+	await db.transaction(async tx => {
+		await tx.delete(clients).where(eq(clients.shift_id, Number(id)))
+		await tx.delete(shifts).where(eq(shifts.id, Number(id)))
+	})
 	return Response.json({ success: true })
 }
 
@@ -29,16 +32,16 @@ export async function GET(
 	{ params }: { params: Promise<{ id: string }> },
 ) {
 	const { id } = await params
-
-	const shiftResult = await pool.query('SELECT * FROM shifts WHERE id = $1', [id])
-	const clientsResult = await pool.query('SELECT * FROM clients WHERE shift_id = $1', [id])
-
+	const [shift] = await db
+		.select()
+		.from(shifts)
+		.where(eq(shifts.id, Number(id)))
+	const result = await db
+		.select()
+		.from(clients)
+		.where(eq(clients.shift_id, Number(id)))
 	return Response.json({
-		shift: shiftResult.rows[0] ?? null,
-		clients: clientsResult.rows.map(r => ({
-			...r,
-			transferDate: r.transfer_date,
-			transferSlot: r.transfer_slot,
-		})),
+		shift: shift ?? null,
+		clients: result.map(serializeClient),
 	})
 }

@@ -33,7 +33,7 @@ export default function SettingsPage() {
 						applyTheme(value as ThemeType)
 					}}
 				>
-					<SelectTrigger className='w-full '>
+					<SelectTrigger className='w-full'>
 						<SelectValue placeholder='Выберите тему' />
 					</SelectTrigger>
 					<SelectContent>

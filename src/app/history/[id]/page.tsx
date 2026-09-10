@@ -9,6 +9,9 @@ import { ClientInterface } from '@/types/client'
 import ShiftClientsSection from '@/components/shift/ShiftClientsSection'
 import { useStore } from '@nanostores/react'
 import { settingsStore } from '@/store/settingsStore'
+import { shiftStore } from '@/store/shiftStore'
+import { toast } from 'sonner'
+import { resetShiftClients } from '@/store/clientsStore'
 
 type Shift = {
 	id: number
@@ -39,12 +42,23 @@ export default function ShiftDetailPage() {
 	}, [fetchData])
 
 	const endShift = async () => {
+		if (isEnding) return
 		setIsEnding(true)
 		try {
-			await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/shifts/${id}`, {
-				method: 'PATCH',
-			})
+			const response = await fetch(
+				`${process.env.NEXT_PUBLIC_BASE_PATH}/api/shifts/${id}`,
+				{
+					method: 'PATCH',
+				},
+			)
+			if (!response.ok) throw new Error('Failed to end shift')
+			if (shiftStore.get()?.id === Number(id)) {
+				shiftStore.set(null)
+				resetShiftClients()
+			}
 			router.push('/history')
+		} catch {
+			toast.error('Не удалось завершить смену. Попробуйте ещё раз.')
 		} finally {
 			setIsEnding(false)
 		}
@@ -74,16 +88,18 @@ export default function ShiftDetailPage() {
 				addHref={`/add?shift_id=${id}`}
 				onFetchClients={fetchData}
 				endShiftSlot={
-					<Button
-						size='lg'
-						variant='destructive'
-						className='w-full'
-						onClick={endShift}
-						disabled={isEnding}
-					>
-						{isEnding ? <Loader2 className='animate-spin' /> : <LogOut />}
-						Завершить смену
-					</Button>
+					shift?.is_active ? (
+						<Button
+							size='lg'
+							variant='destructive'
+							className='w-full'
+							onClick={endShift}
+							disabled={isEnding}
+						>
+							{isEnding ? <Loader2 className='animate-spin' /> : <LogOut />}
+							Завершить смену
+						</Button>
+					) : null
 				}
 			/>
 		</div>

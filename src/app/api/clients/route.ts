@@ -1,54 +1,47 @@
-import pool from '@/lib/db'
+import { eq, getTableColumns, sql } from 'drizzle-orm'
+import db from '@/lib/db'
+import { clients, shifts } from '@/lib/db/schema'
+import {
+	clientValues,
+	serializeClient,
+	type ClientInput,
+} from '@/lib/db/client'
 
 export async function POST(req: Request) {
-	const {
-		name,
-		services,
-		amounts,
-		type,
-		note,
-		transferDate,
-		transferSlot,
-		shift_id,
-	} = await req.json()
-
-	const result = await pool.query(
-		'INSERT INTO clients (name, services, amounts, type, note, transfer_date, transfer_slot, shift_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
-		[
-			name,
-			services,
-			amounts,
-			type,
-			note,
-			transferDate ?? null,
-			transferSlot ?? null,
-			shift_id ?? null,
-		],
-	)
-
-	return Response.json(result.rows[0])
+	const input: ClientInput = await req.json()
+	const [client] = await db
+		.insert(clients)
+		.values(clientValues(input))
+		.returning()
+	return Response.json(serializeClient(client))
 }
 
 export async function GET(req: Request) {
-
 	const { searchParams } = new URL(req.url)
 	const shiftId = searchParams.get('shift_id')
-
 	const month = searchParams.get('month')
 
 	if (shiftId) {
-		const result = await pool.query('SELECT * FROM clients WHERE shift_id = $1', [shiftId])
-		return Response.json(result.rows.map(r => ({ ...r, transferDate: r.transfer_date, transferSlot: r.transfer_slot })))
+		const result = await db
+			.select()
+			.from(clients)
+			.where(eq(clients.shift_id, Number(shiftId)))
+		return Response.json(result.map(serializeClient))
 	}
 
 	if (month) {
-		const result = await pool.query(
-			`SELECT clients.* FROM clients
-			 JOIN shifts ON shifts.id = clients.shift_id
-			 WHERE TO_CHAR(shifts.started_at AT TIME ZONE 'Europe/Moscow', 'YYYY-MM') = $1`,
-			[month],
-		)
-		return Response.json(result.rows.map(r => ({ ...r, transferDate: r.transfer_date, transferSlot: r.transfer_slot })))
+		const result = await db
+			.select(getTableColumns(clients))
+			.from(clients)
+			.innerJoin(shifts, eq(shifts.id, clients.shift_id))
+			// Preserve the existing Moscow calendar month used by statistics.
+			.where(
+				eq(
+					sql<string>`to_char(${shifts.started_at} AT TIME ZONE 'Europe/Moscow', 'YYYY-MM')`,
+					month,
+				),
+			)
+		return Response.json(result.map(serializeClient))
 	}
 
 	return Response.json([])

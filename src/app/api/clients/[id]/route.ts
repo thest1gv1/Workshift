@@ -1,13 +1,18 @@
-import pool from '@/lib/db'
+import { eq } from 'drizzle-orm'
+import db from '@/lib/db'
+import { clients } from '@/lib/db/schema'
+import {
+	clientValues,
+	serializeClient,
+	type ClientInput,
+} from '@/lib/db/client'
 
 export async function DELETE(
-	req: Request,
+	_req: Request,
 	{ params }: { params: Promise<{ id: string }> },
 ) {
 	const { id } = await params
-
-	await pool.query('DELETE FROM clients WHERE id = $1', [id])
-
+	await db.delete(clients).where(eq(clients.id, Number(id)))
 	return Response.json({ success: true })
 }
 
@@ -16,29 +21,36 @@ export async function PUT(
 	{ params }: { params: Promise<{ id: string }> },
 ) {
 	const { id } = await params
-
-	const { name, services, amounts, type, note, transferDate, transferSlot } = await req.json()
-
-	await pool.query(
-		'UPDATE clients SET name=$1, type=$2, services=$3, amounts=$4, note=$5, transfer_date=$6, transfer_slot=$7 WHERE id=$8',
-		[name, type, services, amounts, note, transferDate ?? null, transferSlot ?? null, id],
-	)
-
-	return Response.json({ success: true })
+	const input: ClientInput = await req.json()
+	const values = clientValues(input)
+	const [client] = await db
+		.update(clients)
+		.set({
+			name: values.name,
+			type: values.type,
+			services: values.services,
+			amounts: values.amounts,
+			note: values.note,
+			transfer_date: values.transfer_date,
+			transfer_slot: values.transfer_slot,
+		})
+		.where(eq(clients.id, Number(id)))
+		.returning()
+	if (!client)
+		return Response.json({ error: 'Client not found' }, { status: 404 })
+	return Response.json(serializeClient(client))
 }
 
 export async function GET(
-	req: Request,
+	_req: Request,
 	{ params }: { params: Promise<{ id: string }> },
 ) {
 	const { id } = await params
-
-	const result = await pool.query('SELECT * FROM clients WHERE id = $1', [id])
-	const r = result.rows[0]
-
-	return Response.json({
-		...r,
-		transferDate: r.transfer_date,
-		transferSlot: r.transfer_slot,
-	})
+	const [client] = await db
+		.select()
+		.from(clients)
+		.where(eq(clients.id, Number(id)))
+	if (!client)
+		return Response.json({ error: 'Client not found' }, { status: 404 })
+	return Response.json(serializeClient(client))
 }

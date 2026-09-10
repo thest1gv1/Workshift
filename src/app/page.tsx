@@ -3,12 +3,18 @@
 import { useStore } from '@nanostores/react'
 import { settingsStore } from '@/store/settingsStore'
 import { useEffect, useState } from 'react'
-import { flushSync } from 'react-dom'
-import { ClientInterface } from '@/types/client'
 import { shiftStore, shiftLoadedStore } from '@/store/shiftStore'
 import ShiftStart from '@/components/shift/ShiftStart'
 import ActiveShift from '@/components/shift/ActiveShift'
 import { Loader2 } from 'lucide-react'
+import { toast } from 'sonner'
+import { Button } from '@/components/ui/button'
+import {
+	clientsStore,
+	loadCurrentShift,
+	hasCurrentClients,
+	resetShiftClients,
+} from '@/store/clientsStore'
 
 export default function Home() {
 	const settings = useStore(settingsStore)
@@ -17,8 +23,10 @@ export default function Home() {
 
 	const [isStarting, setIsStarting] = useState(false)
 	const [isEnding, setIsEnding] = useState(false)
-	const [clientsLoading, setClientsLoading] = useState(true)
-	const [clients, setClients] = useState<ClientInterface[]>([])
+	const clients = useStore(clientsStore)
+	const [ready, setReady] = useState(hasCurrentClients)
+	const [loadError, setLoadError] = useState(false)
+	const [attempt, setAttempt] = useState(0)
 
 	const startShift = async () => {
 		setIsStarting(true)
@@ -29,62 +37,70 @@ export default function Home() {
 					method: 'POST',
 				},
 			)
+			if (!res.ok) throw new Error('Failed to start shift')
 			const shift = await res.json()
-			flushSync(() => {
-				setClients([])
-				setClientsLoading(false)
-			})
+			resetShiftClients(shift.id)
 			shiftStore.set(shift)
+			shiftLoadedStore.set(true)
+		} catch {
+			toast.error('Не удалось начать смену. Попробуйте ещё раз.')
 		} finally {
 			setIsStarting(false)
 		}
 	}
 
 	const endShift = async () => {
+		if (!activeShift || isEnding) return
 		setIsEnding(true)
 		try {
-			await fetch(
-				`${process.env.NEXT_PUBLIC_BASE_PATH}/api/shifts/${activeShift!.id}`,
+			const res = await fetch(
+				`${process.env.NEXT_PUBLIC_BASE_PATH}/api/shifts/${activeShift.id}`,
 				{
 					method: 'PATCH',
 				},
 			)
+			if (!res.ok) throw new Error('Failed to end shift')
 			shiftStore.set(null)
-			setClients([])
+			resetShiftClients()
+		} catch {
+			toast.error('Не удалось завершить смену. Попробуйте ещё раз.')
 		} finally {
 			setIsEnding(false)
 		}
 	}
 
-	const fetchClients = (shiftId: number) => {
-		setClientsLoading(true)
-		fetch(
-			`${process.env.NEXT_PUBLIC_BASE_PATH}/api/clients?shift_id=${shiftId}`,
-		)
-			.then(res => res.json())
-			.then(data => setClients(data))
-			.finally(() => setClientsLoading(false))
-	}
-
 	useEffect(() => {
-		if (shiftLoadedStore.get()) {
-			const currentShift = shiftStore.get()
-			if (currentShift) queueMicrotask(() => fetchClients(currentShift.id))
-			return
-		}
-
-		fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/shifts/active`)
-			.then(res => res.json())
-			.then(shift => {
-				shiftStore.set(shift)
-				if (shift) fetchClients(shift.id)
+		let cancelled = false
+		loadCurrentShift()
+			.then(() => {
+				if (!cancelled) setReady(true)
 			})
-			.finally(() => shiftLoadedStore.set(true))
-	}, [])
+			.catch(() => {
+				if (!cancelled) setLoadError(true)
+			})
+		return () => {
+			cancelled = true
+		}
+	}, [attempt])
+
+	if (loadError)
+		return (
+			<div className='grid gap-4'>
+				<p role='alert'>Не удалось загрузить смену. Проверьте подключение.</p>
+				<Button
+					onClick={() => {
+						setLoadError(false)
+						setAttempt(value => value + 1)
+					}}
+				>
+					Повторить
+				</Button>
+			</div>
+		)
 
 	return (
 		<>
-			{!isLoaded ? (
+			{!isLoaded || !ready ? (
 				<div className='flex min-h-[70vh] items-center justify-center'>
 					<Loader2 className='text-muted-foreground animate-spin' size={32} />
 				</div>
@@ -97,9 +113,8 @@ export default function Home() {
 			) : (
 				<ActiveShift
 					clients={clients}
-					clientsLoading={clientsLoading}
+					clientsLoading={false}
 					settings={settings}
-					onFetchClients={() => fetchClients(activeShift.id)}
 					onEndShift={endShift}
 					isEnding={isEnding}
 				/>

@@ -3,10 +3,14 @@
 import { useEffect } from 'react'
 import { initTheme } from '@/store/themeStore'
 
-export default function ThemeProvider({ children }: { children: React.ReactNode }) {
-    useEffect(() => {
-        initTheme()
-    }, [])
+export default function ThemeProvider({
+	children,
+}: {
+	children: React.ReactNode
+}) {
+	useEffect(() => {
+		initTheme()
+	}, [])
 
-    return <>{children}</>
+	return <>{children}</>
 }

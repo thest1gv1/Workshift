@@ -1,13 +1,11 @@
-import pool from '@/lib/db'
+import db from '@/lib/db'
+import { shifts } from '@/lib/db/schema'
 
 export async function POST() {
-	const result = await pool.query(
-		'INSERT INTO shifts DEFAULT VALUES RETURNING *',
-	)
-	return Response.json(result.rows[0])
+	const [shift] = await db.insert(shifts).values({}).returning()
+	return Response.json(shift)
 }
 
 export async function GET() {
-	const result = await pool.query('SELECT * FROM shifts')
-	return Response.json(result.rows)
+	return Response.json(await db.select().from(shifts))
 }

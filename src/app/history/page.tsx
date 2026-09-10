@@ -3,6 +3,9 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
+import { shiftStore } from '@/store/shiftStore'
+import { resetShiftClients } from '@/store/clientsStore'
+import { toast } from 'sonner'
 import {
 	ChevronLeft,
 	ChevronRight,
@@ -56,11 +59,23 @@ export default function HistoryPage() {
 	}, [])
 
 	const deleteShift = async (id: number) => {
-		await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/shifts/${id}`, {
-			method: 'DELETE',
-		})
-		setDeleteId(null)
-		fetchShifts()
+		try {
+			const response = await fetch(
+				`${process.env.NEXT_PUBLIC_BASE_PATH}/api/shifts/${id}`,
+				{
+					method: 'DELETE',
+				},
+			)
+			if (!response.ok) throw new Error('Delete failed')
+			if (shiftStore.get()?.id === id) {
+				shiftStore.set(null)
+				resetShiftClients()
+			}
+			setDeleteId(null)
+			fetchShifts()
+		} catch {
+			toast.error('Не удалось удалить смену. Попробуйте ещё раз.')
+		}
 	}
 
 	return (
