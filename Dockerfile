@@ -1,10 +1,18 @@
+# syntax=docker/dockerfile:1
+
 FROM node:22-bookworm-slim AS dependencies
 
 WORKDIR /app
 ENV HUSKY=0
+ENV NPM_CONFIG_AUDIT=false
+ENV NPM_CONFIG_FUND=false
+ENV NPM_CONFIG_FETCH_RETRIES=6
+ENV NPM_CONFIG_FETCH_RETRY_MINTIMEOUT=20000
+ENV NPM_CONFIG_FETCH_RETRY_MAXTIMEOUT=120000
+ENV NPM_CONFIG_FETCH_TIMEOUT=300000
 
 COPY package.json package-lock.json ./
-RUN npm ci --no-audit --no-fund
+RUN --mount=type=cache,target=/root/.npm npm ci
 
 FROM node:22-bookworm-slim AS builder
 
