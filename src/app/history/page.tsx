@@ -42,7 +42,7 @@ export default function HistoryPage() {
 	const [deleteId, setDeleteId] = useState<number | null>(null)
 
 	const fetchShifts = () => {
-		fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/shifts`)
+		fetch('/api/shifts')
 			.then(res => res.json())
 			.then(data =>
 				setShifts(
@@ -60,12 +60,9 @@ export default function HistoryPage() {
 
 	const deleteShift = async (id: number) => {
 		try {
-			const response = await fetch(
-				`${process.env.NEXT_PUBLIC_BASE_PATH}/api/shifts/${id}`,
-				{
-					method: 'DELETE',
-				},
-			)
+			const response = await fetch(`/api/shifts/${id}`, {
+				method: 'DELETE',
+			})
 			if (!response.ok) throw new Error('Delete failed')
 			if (shiftStore.get()?.id === id) {
 				shiftStore.set(null)

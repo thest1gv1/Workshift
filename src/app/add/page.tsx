@@ -149,10 +149,10 @@ function AddForm() {
 		try {
 			const formData = new FormData()
 			formData.set('audio', audio, `voice.${extension}`)
-			const response = await fetch(
-				`${process.env.NEXT_PUBLIC_BASE_PATH}/api/voice-input`,
-				{ method: 'POST', body: formData },
-			)
+			const response = await fetch('/api/voice-input', {
+				method: 'POST',
+				body: formData,
+			})
 			const result = (await response.json()) as VoiceInputResult & {
 				error?: string
 			}
@@ -352,14 +352,11 @@ function AddForm() {
 				shift_id: shiftId ?? null,
 			}
 
-			const response = await fetch(
-				`${process.env.NEXT_PUBLIC_BASE_PATH}/api/clients${id ? `/${id}` : ''}`,
-				{
-					method: id ? 'PUT' : 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify(data),
-				},
-			)
+			const response = await fetch(`/api/clients${id ? `/${id}` : ''}`, {
+				method: id ? 'PUT' : 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(data),
+			})
 			if (!response.ok)
 				throw new Error('Не удалось сохранить клиента. Попробуйте ещё раз.')
 			saveClientToStore(await response.json())
@@ -379,7 +376,7 @@ function AddForm() {
 	useEffect(() => {
 		if (!id) return
 
-		fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/clients/${id}`)
+		fetch(`/api/clients/${id}`)
 			.then(res => res.json())
 			.then(client => {
 				setName(client.name)

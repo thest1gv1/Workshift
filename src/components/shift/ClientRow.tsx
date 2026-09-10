@@ -67,12 +67,9 @@ export default function ClientRow({
 		setIsDeleting(true)
 		try {
 			await loadCurrentShift()
-			const response = await fetch(
-				`${process.env.NEXT_PUBLIC_BASE_PATH}/api/clients/${id}`,
-				{
-					method: 'DELETE',
-				},
-			)
+			const response = await fetch(`/api/clients/${id}`, {
+				method: 'DELETE',
+			})
 			if (!response.ok) throw new Error('Delete failed')
 			removeClientFromStore(id)
 			fetchClients?.()

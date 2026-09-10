@@ -10,7 +10,6 @@ services:
       DB_PASSWORD: ${POSTGRES_PASSWORD}
       OPENAI_API_KEY: ${OPENAI_API_KEY}
       AUTH_KEY: ${AUTH_KEY}
-      NEXT_PUBLIC_BASE_PATH: ${NEXT_PUBLIC_BASE_PATH:-/workshift}
     ports:
       - '${APP_PORT:-3000}:3000'
     depends_on:
