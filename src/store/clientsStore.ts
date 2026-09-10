@@ -19,7 +19,9 @@ export async function loadCurrentShift() {
 	loading = (async () => {
 		const version = revision
 		if (!shiftLoadedStore.get()) {
-			const response = await fetch('/api/shifts/active')
+			const response = await fetch(
+				`${process.env.NEXT_PUBLIC_BASE_PATH}/api/shifts/active`,
+			)
 			if (!response.ok) throw new Error('Не удалось загрузить смену')
 			const shift = await response.json()
 			if (version !== revision) return
@@ -28,7 +30,9 @@ export async function loadCurrentShift() {
 		}
 		const shift = shiftStore.get()
 		if (!shift || loadedShiftId === shift.id) return
-		const response = await fetch(`/api/clients?shift_id=${shift.id}`)
+		const response = await fetch(
+			`${process.env.NEXT_PUBLIC_BASE_PATH}/api/clients?shift_id=${shift.id}`,
+		)
 		if (!response.ok) throw new Error('Не удалось загрузить клиентов')
 		const clients: SavedClient[] = await response.json()
 		if (version !== revision || shiftStore.get()?.id !== shift.id) return

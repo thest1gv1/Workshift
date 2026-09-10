@@ -25,7 +25,7 @@ export default function StatsPage() {
 
 	useEffect(() => {
 		setIsLoading(true)
-		fetch(`/api/clients?month=${month}`)
+		fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/clients?month=${month}`)
 			.then(res => res.json())
 			.then(data => setClients(data))
 			.finally(() => setIsLoading(false))
