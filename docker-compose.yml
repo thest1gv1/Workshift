@@ -1,6 +1,6 @@
 services:
   app:
-    image: thest1gv1/workshift:551f048
+    image: thest1gv1/workshift:root-localdb-v1
     restart: unless-stopped
     environment:
       DB_HOST: db
